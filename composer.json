@@ -1,0 +1,15 @@
+{
+    "name": "geniusreferrals/genius-api-javascript-client",
+    "description": "Genius Javascript Client allows the clients to consume the API directly from their products.",
+    "authors": [
+        {
+            "name": "Genius Referrals",
+            "email": "genius@geniusreferrals.com",
+            "homepage": "http://www.geniusreferrals.com"
+        }
+    ],
+    "require": {
+    },
+    "require-dev": {
+    }
+}

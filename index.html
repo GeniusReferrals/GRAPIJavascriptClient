@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Genius Referral API Javascript Client - Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script type="text/javascript" src="lib/wsse.js"></script>
+        <script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="genius-api-client.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // Enter the Genius Referral client email and API token  - to handle any unauthenticated requests in the code.
+                var clientEmail = 'client1@mail.com'
+                var apiToken = '3433148';
+
+                var auth = new genius.auth(clientEmail, apiToken);
+                var client = new genius.client();
+                
+                var response = client.testAuthentication(auth);
+                response.done(function(msg) {
+                    alert("Successfully authentication test - Genius Referral API Javascript Client.");
+                    logResponse(msg);
+                });
+
+                response.fail(function(jqXHR, textStatus) {
+                    if (jqXHR.status === 0) {
+                        alert('Not connect.\n Verify Network.');
+                    }
+                    else if (jqXHR.status == 404) {
+                        alert('Requested page not found. [404]');
+                    }
+                    else if (jqXHR.status == 500) {
+                        alert('Internal Server Error [500].');
+                    }
+                    else if (exception === 'parsererror') {
+                        alert('Requested JSON parse failed.');
+                    }
+                    else if (exception === 'timeout') {
+                        alert('Time out error.');
+                    }
+                    else if (exception === 'abort') {
+                        alert('Ajax request aborted.');
+                    }
+                    else {
+                        alert('Uncaught Error.\n' + jqXHR.responseText);
+                    }
+                });
+
+                function logResponse(resp) {
+                    console.log(resp);
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div>Genius Referral API Javascript Client</div>
+    </body>
+</html>
