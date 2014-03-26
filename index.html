@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Genius Referral API Javascript Client - Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script type="text/javascript" src="lib/wsse.js"></script>
+        <script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="genius-api-client.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // Enter the Genius Referral client email and API token  - to handle any unauthenticated requests in the code.
+                var clientEmail = 'client1@mail.com';
+                var apiToken = '3433148';
+
+                var auth = new genius.auth(clientEmail, apiToken);
+                var client = new genius.client();
+                
+                var response = client.getRoot(auth);
+                response.done(function(data, textStatus, jqXHR) {
+                    console.log(data);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                });
+
+                response.fail(function(jqXHR, textStatus) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div>Genius Referral API Javascript Client</div>
+    </body>
+</html>
