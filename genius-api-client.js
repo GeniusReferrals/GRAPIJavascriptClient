@@ -1,6 +1,6 @@
 //Defining the Genius API namespace
 var genius = {
-    baseurl: "https://staging.api.geniusreferrals.com"
+    baseurl: "https://api.geniusreferrals.com"
 };
 
 //Defining the Genius Referral authentication object
