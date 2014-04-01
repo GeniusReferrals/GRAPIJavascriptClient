@@ -6,7 +6,7 @@ Instalando Genius Referral Javascript API
 
 - Para utilizar la API Javascript de Genius Referrals directamente desde sus productos descarge el cliente JS de Genius Referral API ubicado en [https://github.com/GeniusReferrals/GRAPIJavascriptClient] e incluyalo en su proyecto.
 
-A continuaci'on se muestra un ejemplo de como utilizar el cliente javascript Genius Referral:
+A continuación se muestra un ejemplo de como utilizar el cliente javascript Genius Referral:
 
 
 <!DOCTYPE html>
@@ -25,10 +25,13 @@ A continuaci'on se muestra un ejemplo de como utilizar el cliente javascript Gen
                 var apiToken = '3433148';
 
                 //Defining the Genius Referral authentication object
-                genius.construct(clientEmail, apiToken);
+                var auth = new genius.auth(clientEmail, apiToken);
                 
+                //Defining the Genius Referral client object
+                var client = new genius.client();
+				
                 // Get the list of Genius Referrals client accounts.
-                var response = genius.getAccounts();
+                var response = client.getRoot(auth);
                 
                 response.done(function(data, textStatus, jqXHR) {
                     ***
