@@ -4,7 +4,7 @@ var genius = {
 };
 
 //Defining the Genius Referral authentication object
-genius.construct = function(clientEmail, apiToken) {
+genius.auth = function(clientEmail, apiToken) {
     this.clientEmail = clientEmail;
     this.apiToken = apiToken;
 };
@@ -14,8 +14,12 @@ genius.construct = function(clientEmail, apiToken) {
  * 
  * @return string WSSE Header
  */
-genius.generateWSSEHeader = function() {
+genius.auth.prototype.generateWSSEHeader = function() {
     return wsseHeader(this.clientEmail, this.apiToken);
+};
+
+//Client
+genius.client = function() {
 };
 
 /**
@@ -23,7 +27,7 @@ genius.generateWSSEHeader = function() {
  *
  * @return string API URL
  */
-genius.getApiUrl = function() {
+genius.client.prototype.getApiUrl = function() {
     return genius.baseurl;
 };
 
@@ -51,7 +55,7 @@ genius.getApiUrl = function() {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return string
  */
-genius.addCommonFilters = function(page, limit, filter, sort) {
+genius.client.prototype.addCommonFilters = function(page, limit, filter, sort) {
 
     var params = ['page=' + page, 'limit=' + limit];
 
@@ -72,21 +76,22 @@ genius.addCommonFilters = function(page, limit, filter, sort) {
  * @param object auth Genius Referral authentication object
  * @return jqXHR object
  */
-genius.getRoot = function() {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        return $.ajax({
-            url: genius.baseurl + '/',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": genius.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+genius.client.prototype.getRoot = function(auth) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+
+    return $.ajax({
+        url: genius.baseurl + '/',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 
@@ -114,30 +119,31 @@ genius.getRoot = function() {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getAccounts = function(page, limit, filter, sort) {
-    if (typeof this.clientEmail !== 'undefined' && typeof this.apiToken !== 'undefined')
-    {
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getAccounts = function(auth, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
 
-        var filters = genius.addCommonFilters(page, limit, filter, sort);
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": genius.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
+    return $.ajax({
+        url: genius.baseurl + '/accounts',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -147,23 +153,23 @@ genius.getAccounts = function(page, limit, filter, sort) {
  * @param string account_slug The client account slug
  * @return jqXHR object
  */
-genius.getAccount = function(account_slug) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+genius.client.prototype.getAccount = function(auth, account_slug) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -191,31 +197,31 @@ genius.getAccount = function(account_slug) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getAdvocates = function(account_slug, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getAdvocates = function(auth, account_slug, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/advocates',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/advocates',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -226,24 +232,24 @@ genius.getAdvocates = function(account_slug, page, limit, filter, sort) {
  * @param string advocate_token The advocate token
  * @return jqXHR object
  */
-genius.getAdvocate = function(account_slug, advocate_token) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+genius.client.prototype.getAdvocate = function(auth, account_slug, advocate_token) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -272,32 +278,32 @@ genius.getAdvocate = function(account_slug, advocate_token) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getAdvocatePaymentMethods = function(account_slug, advocate_token, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -309,25 +315,25 @@ genius.getAdvocatePaymentMethods = function(account_slug, advocate_token, page, 
  * @param integer advocate_payment_method_id The payment method id
  * @return jqXHR object
  */
-genius.getAdvocatePaymentMethod = function(account_slug, advocate_token, advocate_payment_method_id) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
-        advocate_payment_method_id = typeof advocate_payment_method_id !== 'undefined' ? advocate_payment_method_id : '';
+genius.client.prototype.getAdvocatePaymentMethod = function(auth, account_slug, advocate_token, advocate_payment_method_id) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+    advocate_payment_method_id = typeof advocate_payment_method_id !== 'undefined' ? advocate_payment_method_id : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods/' + advocate_payment_method_id,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods/' + advocate_payment_method_id,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -356,32 +362,32 @@ genius.getAdvocatePaymentMethod = function(account_slug, advocate_token, advocat
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getReferrals = function(account_slug, advocate_token, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getReferrals = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -393,25 +399,25 @@ genius.getReferrals = function(account_slug, advocate_token, page, limit, filter
  * @param integer referral_id The referral id
  * @return jqXHR object
  */
-genius.getReferral = function(account_slug, advocate_token, referral_id) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
-        referral_id = typeof referral_id !== 'undefined' ? referral_id : '';
+genius.client.prototype.getReferral = function(auth, account_slug, advocate_token, referral_id) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+    referral_id = typeof referral_id !== 'undefined' ? referral_id : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals/' + referral_id,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals/' + referral_id,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -439,31 +445,31 @@ genius.getReferral = function(account_slug, advocate_token, referral_id) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getBonuses = function(account_slug, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getBonuses = function(auth, account_slug, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/bonuses',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -474,24 +480,24 @@ genius.getBonuses = function(account_slug, page, limit, filter, sort) {
  * @param integer bonus_id The bonus id
  * @return jqXHR object
  */
-genius.getBonus = function(account_slug, bonus_id) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        bonus_id = typeof bonus_id !== 'undefined' ? bonus_id : '';
+genius.client.prototype.getBonus = function(auth, account_slug, bonus_id) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    bonus_id = typeof bonus_id !== 'undefined' ? bonus_id : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/' + bonus_id,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/' + bonus_id,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -501,23 +507,23 @@ genius.getBonus = function(account_slug, bonus_id) {
  * @param string account_slug The client account slug
  * @return jqXHR object
  */
-genius.getBonusesCheckup = function(account_slug) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+genius.client.prototype.getBonusesCheckup = function(auth, account_slug) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/checkup',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/checkup',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -545,31 +551,31 @@ genius.getBonusesCheckup = function(account_slug) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getBonusesTraces = function(account_slug, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getBonusesTraces = function(auth, account_slug, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/traces',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/traces',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -580,24 +586,24 @@ genius.getBonusesTraces = function(account_slug, page, limit, filter, sort) {
  * @param integer trace_id The trace id
  * @return jqXHR object
  */
-genius.getBonusesTrace = function(account_slug, trace_id) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        trace_id = typeof trace_id !== 'undefined' ? trace_id : '';
+genius.client.prototype.getBonusesTrace = function(auth, account_slug, trace_id) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    trace_id = typeof trace_id !== 'undefined' ? trace_id : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/traces/' + trace_id,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/traces/' + trace_id,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -625,31 +631,31 @@ genius.getBonusesTrace = function(account_slug, trace_id) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getCampains = function(account_slug, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getCampains = function(auth, account_slug, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/campaigns',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/campaigns',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -660,24 +666,24 @@ genius.getCampains = function(account_slug, page, limit, filter, sort) {
  * @param string campaign_slug The campaign slug
  * @return jqXHR object
  */
-genius.getCampaign = function(account_slug, campaign_slug) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        campaign_slug = typeof campaign_slug !== 'undefined' ? campaign_slug : '';
+genius.client.prototype.getCampaign = function(auth, account_slug, campaign_slug) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    campaign_slug = typeof campaign_slug !== 'undefined' ? campaign_slug : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/campaigns/' + campaign_slug,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/campaigns/' + campaign_slug,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -705,31 +711,31 @@ genius.getCampaign = function(account_slug, campaign_slug) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.getRedemptionRequests = function(account_slug, page, limit, filter, sort) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-        page = typeof page !== 'undefined' ? page : 1;
-        limit = typeof limit !== 'undefined' ? limit : 10;
-        filter = typeof filter !== 'undefined' ? filter : '';
-        sort = typeof sort !== 'undefined' ? sort : '';
+genius.client.prototype.getRedemptionRequests = function(auth, account_slug, page, limit, filter, sort) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    page = typeof page !== 'undefined' ? page : 1;
+    limit = typeof limit !== 'undefined' ? limit : 10;
+    filter = typeof filter !== 'undefined' ? filter : '';
+    sort = typeof sort !== 'undefined' ? sort : '';
 
-        var client = new genius.client();
-        var filters = client.addCommonFilters(page, limit, filter, sort);
+    var client = new genius.client();
+    var filters = client.addCommonFilters(page, limit, filter, sort);
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests',
-            type: 'OPTIONS',
-            data: filters,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests',
+        type: 'OPTIONS',
+        data: filters,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -740,24 +746,24 @@ genius.getRedemptionRequests = function(account_slug, page, limit, filter, sort)
  * @param integer redemption_request_id The redemption request id
  * @return jqXHR object
  */
-genius.getRedemptionRequest = function(account_slug, redemption_request_id) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        redemption_request_id = typeof redemption_request_id !== 'undefined' ? redemption_request_id : '';
+genius.client.prototype.getRedemptionRequest = function(auth, account_slug, redemption_request_id) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    redemption_request_id = typeof redemption_request_id !== 'undefined' ? redemption_request_id : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -768,24 +774,24 @@ genius.getRedemptionRequest = function(account_slug, redemption_request_id) {
  * @param integer redemption_request_id The redemption request id
  * @return jqXHR object
  */
-genius.patchRedemptionRequestRedemption = function(account_slug, redemption_request_id) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
-        redemption_request_id = typeof redemption_request_id !== 'undefined' ? redemption_request_id : '';
+genius.client.prototype.patchRedemptionRequestRedemption = function(auth, account_slug, redemption_request_id) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    redemption_request_id = typeof redemption_request_id !== 'undefined' ? redemption_request_id : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id + '/redemption',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id + '/redemption',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -795,24 +801,24 @@ genius.patchRedemptionRequestRedemption = function(account_slug, redemption_requ
  * @param string strAdvocateToken The advocate token
  * @return jqXHR object
  */
-genius.getBonusesSummaryPerOriginReport = function(strAdvocateToken) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        filter = 'filter=advocate_token::' + strAdvocateToken;
+genius.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocateToken) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    filter = 'filter=advocate_token::' + strAdvocateToken;
 
-        return $.ajax({
-            url: genius.baseurl + '/reports/bonuses-summary-per-origin',
-            type: 'OPTIONS',
-            data: filter,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/reports/bonuses-summary-per-origin',
+        type: 'OPTIONS',
+        data: filter,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -822,24 +828,24 @@ genius.getBonusesSummaryPerOriginReport = function(strAdvocateToken) {
  * @param string strAdvocateToken The advocate token
  * @return jqXHR object
  */
-genius.getReferralsSummaryPerOriginReport = function(strAdvocateToken) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        filter = 'filter=advocate_token::' + strAdvocateToken;
+genius.client.prototype.getReferralsSummaryPerOriginReport = function(auth, strAdvocateToken) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    filter = 'filter=advocate_token::' + strAdvocateToken;
 
-        return $.ajax({
-            url: genius.baseurl + '/reports/referrals-summary-per-origin',
-            type: 'OPTIONS',
-            data: filter,
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/reports/referrals-summary-per-origin',
+        type: 'OPTIONS',
+        data: filter,
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -848,21 +854,22 @@ genius.getReferralsSummaryPerOriginReport = function(strAdvocateToken) {
  * @param object auth Genius Referral authentication object
  * @return jqXHR object
  */
-genius.testAuthentication = function(auth) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        return $.ajax({
-            url: genius.baseurl + '/test-authentication',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+genius.client.prototype.testAuthentication = function(auth) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+
+    return $.ajax({
+        url: genius.baseurl + '/test-authentication',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -871,21 +878,22 @@ genius.testAuthentication = function(auth) {
  * @param object auth Genius Referral authentication object
  * @return jqXHR object
  */
-genius.getBonusesRedemptionMethods = function(auth) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        return $.ajax({
-            url: genius.baseurl + '/utilities/bonuses-redemption-methods',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+genius.client.prototype.getBonusesRedemptionMethods = function(auth) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+
+    return $.ajax({
+        url: genius.baseurl + '/utilities/bonuses-redemption-methods',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -895,23 +903,23 @@ genius.getBonusesRedemptionMethods = function(auth) {
  * @param string bonuses_redemption_method_slug The bonuses redemption method slug
  * @return jqXHR object
  */
-genius.getBonusRedemptionMethod = function(bonuses_redemption_method_slug) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        bonuses_redemption_method_slug = typeof bonuses_redemption_method_slug !== 'undefined' ? bonuses_redemption_method_slug : '';
+genius.client.prototype.getBonusRedemptionMethod = function(bonuses_redemption_method_slug) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    bonuses_redemption_method_slug = typeof bonuses_redemption_method_slug !== 'undefined' ? bonuses_redemption_method_slug : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/utilities/bonuses-redemption-methods/' + bonuses_redemption_method_slug,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/utilities/bonuses-redemption-methods/' + bonuses_redemption_method_slug,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -920,21 +928,22 @@ genius.getBonusRedemptionMethod = function(bonuses_redemption_method_slug) {
  * @param object auth Genius Referral authentication object
  * @return jqXHR object
  */
-genius.getCurrencies = function(auth) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        return $.ajax({
-            url: genius.baseurl + '/utilities/currencies',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+genius.client.prototype.getCurrencies = function(auth) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+
+    return $.ajax({
+        url: genius.baseurl + '/utilities/currencies',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -944,23 +953,23 @@ genius.getCurrencies = function(auth) {
  * @param string code The bonuses redemption method slug
  * @return jqXHR object
  */
-genius.getCurrency = function(code) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        code = typeof code !== 'undefined' ? code : '';
+genius.client.prototype.getCurrency = function(code) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    code = typeof code !== 'undefined' ? code : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/utilities/currencies/' + code,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/utilities/currencies/' + code,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -969,21 +978,22 @@ genius.getCurrency = function(code) {
  * @param object auth Genius Referral authentication object
  * @return jqXHR object
  */
-genius.getRedemptionRequestsActions = function(auth) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        return $.ajax({
-            url: genius.baseurl + '/utilities/redemption-request-actions',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+genius.client.prototype.getRedemptionRequestsActions = function(auth) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+
+    return $.ajax({
+        url: genius.baseurl + '/utilities/redemption-request-actions',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -993,23 +1003,23 @@ genius.getRedemptionRequestsActions = function(auth) {
  * @param string redemption_request_action_slug The redemption request action slug
  * @return jqXHR object
  */
-genius.getRedemptionRequestAction = function(redemption_request_action_slug) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        redemption_request_action_slug = typeof redemption_request_action_slug !== 'undefined' ? redemption_request_action_slug : '';
+genius.client.prototype.getRedemptionRequestAction = function(redemption_request_action_slug) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    redemption_request_action_slug = typeof redemption_request_action_slug !== 'undefined' ? redemption_request_action_slug : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/utilities/currencies/' + redemption_request_action_slug,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/utilities/currencies/' + redemption_request_action_slug,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -1018,21 +1028,22 @@ genius.getRedemptionRequestAction = function(redemption_request_action_slug) {
  * @param object auth Genius Referral authentication object
  * @return jqXHR object
  */
-genius.getRedemptionRequestStatuses = function(auth) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        return $.ajax({
-            url: genius.baseurl + '/utilities/redemption-request-statuses',
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+genius.client.prototype.getRedemptionRequestStatuses = function(auth) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+
+    return $.ajax({
+        url: genius.baseurl + '/utilities/redemption-request-statuses',
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 /**
@@ -1042,23 +1053,23 @@ genius.getRedemptionRequestStatuses = function(auth) {
  * @param string redemption_request_status_slug The redemption request status slug
  * @return jqXHR object
  */
-genius.getRedemptionRequestStatus = function(redemption_request_status_slug) {
-    if (this.clientEmail !== 'undefined' && this.apiToken !== 'undefined')
-    {
-        redemption_request_status_slug = typeof redemption_request_status_slug !== 'undefined' ? redemption_request_status_slug : '';
+genius.client.prototype.getRedemptionRequestStatus = function(redemption_request_status_slug) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    redemption_request_status_slug = typeof redemption_request_status_slug !== 'undefined' ? redemption_request_status_slug : '';
 
-        return $.ajax({
-            url: genius.baseurl + '/utilities/redemption-request-statuses/' + redemption_request_status_slug,
-            type: 'OPTIONS',
-            header: {
-                "HTTP_ACCEPT": "application/json",
-                "CONTENT_TYPE": "application/json",
-                "Authorization": 'WSSE profile="UsernameToken"',
-                "X-WSSE": auth.generateWSSEHeader()
-            }
-        });
-    } else
-        alert('You must specify the clientEmail and apiToken');
+    return $.ajax({
+        url: genius.baseurl + '/utilities/redemption-request-statuses/' + redemption_request_status_slug,
+        type: 'OPTIONS',
+        header: {
+            "HTTP_ACCEPT": "application/json",
+            "CONTENT_TYPE": "application/json",
+            "Authorization": 'WSSE profile="UsernameToken"',
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
+        }
+    });
 };
 
 
@@ -1093,26 +1104,38 @@ genius.getRedemptionRequestStatus = function(redemption_request_status_slug) {
  * the server-side, but the defaults work in most cases.
  */
 var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
-var b64pad  = "="; /* base-64 pad character. "=" for strict RFC compliance   */
-var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
+var b64pad = "="; /* base-64 pad character. "=" for strict RFC compliance   */
+var chrsz = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
 
 /*
  * These are the functions you'll usually want to call
  * They take string arguments and return either hex or base-64 encoded strings
  */
-function hex_sha1(s){return binb2hex(core_sha1(str2binb(s),s.length * chrsz));}
-function b64_sha1(s){return binb2b64(core_sha1(str2binb(s),s.length * chrsz));}
-function str_sha1(s){return binb2str(core_sha1(str2binb(s),s.length * chrsz));}
-function hex_hmac_sha1(key, data){ return binb2hex(core_hmac_sha1(key, data));}
-function b64_hmac_sha1(key, data){ return binb2b64(core_hmac_sha1(key, data));}
-function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
+function hex_sha1(s) {
+    return binb2hex(core_sha1(str2binb(s), s.length * chrsz));
+}
+function b64_sha1(s) {
+    return binb2b64(core_sha1(str2binb(s), s.length * chrsz));
+}
+function str_sha1(s) {
+    return binb2str(core_sha1(str2binb(s), s.length * chrsz));
+}
+function hex_hmac_sha1(key, data) {
+    return binb2hex(core_hmac_sha1(key, data));
+}
+function b64_hmac_sha1(key, data) {
+    return binb2b64(core_hmac_sha1(key, data));
+}
+function str_hmac_sha1(key, data) {
+    return binb2str(core_hmac_sha1(key, data));
+}
 
 /*
  * Perform a simple self-test to see if the VM is working
  */
 function sha1_vm_test()
 {
-  return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
+    return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
 }
 
 /*
@@ -1120,45 +1143,47 @@ function sha1_vm_test()
  */
 function core_sha1(x, len)
 {
-  /* append padding */
-  x[len >> 5] |= 0x80 << (24 - len % 32);
-  x[((len + 64 >> 9) << 4) + 15] = len;
+    /* append padding */
+    x[len >> 5] |= 0x80 << (24 - len % 32);
+    x[((len + 64 >> 9) << 4) + 15] = len;
 
-  var w = Array(80);
-  var a =  1732584193;
-  var b = -271733879;
-  var c = -1732584194;
-  var d =  271733878;
-  var e = -1009589776;
+    var w = Array(80);
+    var a = 1732584193;
+    var b = -271733879;
+    var c = -1732584194;
+    var d = 271733878;
+    var e = -1009589776;
 
-  for(var i = 0; i < x.length; i += 16)
-  {
-    var olda = a;
-    var oldb = b;
-    var oldc = c;
-    var oldd = d;
-    var olde = e;
-
-    for(var j = 0; j < 80; j++)
+    for (var i = 0; i < x.length; i += 16)
     {
-      if(j < 16) w[j] = x[i + j];
-      else w[j] = rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1);
-      var t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
-                       safe_add(safe_add(e, w[j]), sha1_kt(j)));
-      e = d;
-      d = c;
-      c = rol(b, 30);
-      b = a;
-      a = t;
-    }
+        var olda = a;
+        var oldb = b;
+        var oldc = c;
+        var oldd = d;
+        var olde = e;
 
-    a = safe_add(a, olda);
-    b = safe_add(b, oldb);
-    c = safe_add(c, oldc);
-    d = safe_add(d, oldd);
-    e = safe_add(e, olde);
-  }
-  return Array(a, b, c, d, e);
+        for (var j = 0; j < 80; j++)
+        {
+            if (j < 16)
+                w[j] = x[i + j];
+            else
+                w[j] = rol(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
+            var t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
+                    safe_add(safe_add(e, w[j]), sha1_kt(j)));
+            e = d;
+            d = c;
+            c = rol(b, 30);
+            b = a;
+            a = t;
+        }
+
+        a = safe_add(a, olda);
+        b = safe_add(b, oldb);
+        c = safe_add(c, oldc);
+        d = safe_add(d, oldd);
+        e = safe_add(e, olde);
+    }
+    return Array(a, b, c, d, e);
 
 }
 
@@ -1168,10 +1193,13 @@ function core_sha1(x, len)
  */
 function sha1_ft(t, b, c, d)
 {
-  if(t < 20) return (b & c) | ((~b) & d);
-  if(t < 40) return b ^ c ^ d;
-  if(t < 60) return (b & c) | (b & d) | (c & d);
-  return b ^ c ^ d;
+    if (t < 20)
+        return (b & c) | ((~b) & d);
+    if (t < 40)
+        return b ^ c ^ d;
+    if (t < 60)
+        return (b & c) | (b & d) | (c & d);
+    return b ^ c ^ d;
 }
 
 /*
@@ -1179,8 +1207,8 @@ function sha1_ft(t, b, c, d)
  */
 function sha1_kt(t)
 {
-  return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
-         (t < 60) ? -1894007588 : -899497514;
+    return (t < 20) ? 1518500249 : (t < 40) ? 1859775393 :
+            (t < 60) ? -1894007588 : -899497514;
 }
 
 /*
@@ -1188,18 +1216,19 @@ function sha1_kt(t)
  */
 function core_hmac_sha1(key, data)
 {
-  var bkey = str2binb(key);
-  if(bkey.length > 16) bkey = core_sha1(bkey, key.length * chrsz);
+    var bkey = str2binb(key);
+    if (bkey.length > 16)
+        bkey = core_sha1(bkey, key.length * chrsz);
 
-  var ipad = Array(16), opad = Array(16);
-  for(var i = 0; i < 16; i++)
-  {
-    ipad[i] = bkey[i] ^ 0x36363636;
-    opad[i] = bkey[i] ^ 0x5C5C5C5C;
-  }
+    var ipad = Array(16), opad = Array(16);
+    for (var i = 0; i < 16; i++)
+    {
+        ipad[i] = bkey[i] ^ 0x36363636;
+        opad[i] = bkey[i] ^ 0x5C5C5C5C;
+    }
 
-  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
-  return core_sha1(opad.concat(hash), 512 + 160);
+    var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
+    return core_sha1(opad.concat(hash), 512 + 160);
 }
 
 /*
@@ -1208,9 +1237,9 @@ function core_hmac_sha1(key, data)
  */
 function safe_add(x, y)
 {
-  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-  return (msw << 16) | (lsw & 0xFFFF);
+    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    return (msw << 16) | (lsw & 0xFFFF);
 }
 
 /*
@@ -1218,7 +1247,7 @@ function safe_add(x, y)
  */
 function rol(num, cnt)
 {
-  return (num << cnt) | (num >>> (32 - cnt));
+    return (num << cnt) | (num >>> (32 - cnt));
 }
 
 /*
@@ -1227,11 +1256,11 @@ function rol(num, cnt)
  */
 function str2binb(str)
 {
-  var bin = Array();
-  var mask = (1 << chrsz) - 1;
-  for(var i = 0; i < str.length * chrsz; i += chrsz)
-    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i%32);
-  return bin;
+    var bin = Array();
+    var mask = (1 << chrsz) - 1;
+    for (var i = 0; i < str.length * chrsz; i += chrsz)
+        bin[i >> 5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i % 32);
+    return bin;
 }
 
 /*
@@ -1239,11 +1268,11 @@ function str2binb(str)
  */
 function binb2str(bin)
 {
-  var str = "";
-  var mask = (1 << chrsz) - 1;
-  for(var i = 0; i < bin.length * 32; i += chrsz)
-    str += String.fromCharCode((bin[i>>5] >>> (32 - chrsz - i%32)) & mask);
-  return str;
+    var str = "";
+    var mask = (1 << chrsz) - 1;
+    for (var i = 0; i < bin.length * 32; i += chrsz)
+        str += String.fromCharCode((bin[i >> 5] >>> (32 - chrsz - i % 32)) & mask);
+    return str;
 }
 
 /*
@@ -1251,14 +1280,14 @@ function binb2str(bin)
  */
 function binb2hex(binarray)
 {
-  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
-  var str = "";
-  for(var i = 0; i < binarray.length * 4; i++)
-  {
-    str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) +
-           hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8  )) & 0xF);
-  }
-  return str;
+    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var str = "";
+    for (var i = 0; i < binarray.length * 4; i++)
+    {
+        str += hex_tab.charAt((binarray[i >> 2] >> ((3 - i % 4) * 8 + 4)) & 0xF) +
+                hex_tab.charAt((binarray[i >> 2] >> ((3 - i % 4) * 8)) & 0xF);
+    }
+    return str;
 }
 
 /*
@@ -1266,20 +1295,22 @@ function binb2hex(binarray)
  */
 function binb2b64(binarray)
 {
-  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  var str = "";
-  for(var i = 0; i < binarray.length * 4; i += 3)
-  {
-    var triplet = (((binarray[i   >> 2] >> 8 * (3 -  i   %4)) & 0xFF) << 16)
-                | (((binarray[i+1 >> 2] >> 8 * (3 - (i+1)%4)) & 0xFF) << 8 )
-                |  ((binarray[i+2 >> 2] >> 8 * (3 - (i+2)%4)) & 0xFF);
-    for(var j = 0; j < 4; j++)
+    var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var str = "";
+    for (var i = 0; i < binarray.length * 4; i += 3)
     {
-      if(i * 8 + j * 6 > binarray.length * 32) str += b64pad;
-      else str += tab.charAt((triplet >> 6*(3-j)) & 0x3F);
+        var triplet = (((binarray[i >> 2] >> 8 * (3 - i % 4)) & 0xFF) << 16)
+                | (((binarray[i + 1 >> 2] >> 8 * (3 - (i + 1) % 4)) & 0xFF) << 8)
+                | ((binarray[i + 2 >> 2] >> 8 * (3 - (i + 2) % 4)) & 0xFF);
+        for (var j = 0; j < 4; j++)
+        {
+            if (i * 8 + j * 6 > binarray.length * 32)
+                str += b64pad;
+            else
+                str += tab.charAt((triplet >> 6 * (3 - j)) & 0x3F);
+        }
     }
-  }
-  return str;
+    return str;
 }
 
 // aardwulf systems
@@ -1287,10 +1318,10 @@ function binb2b64(binarray)
 // http://www.aardwulf.com/tutor/base64/
 function encode64(input) {
     var keyStr = "ABCDEFGHIJKLMNOP" +
-                "QRSTUVWXYZabcdef" +
-                "ghijklmnopqrstuv" +
-                "wxyz0123456789+/" +
-                "=";
+            "QRSTUVWXYZabcdef" +
+            "ghijklmnopqrstuv" +
+            "wxyz0123456789+/" +
+            "=";
 
     var output = "";
     var chr1, chr2, chr3 = "";
@@ -1308,16 +1339,16 @@ function encode64(input) {
         enc4 = chr3 & 63;
 
         if (isNaN(chr2)) {
-        enc3 = enc4 = 64;
+            enc3 = enc4 = 64;
         } else if (isNaN(chr3)) {
-        enc4 = 64;
+            enc4 = 64;
         }
 
-        output = output + 
-        keyStr.charAt(enc1) + 
-        keyStr.charAt(enc2) + 
-        keyStr.charAt(enc3) + 
-        keyStr.charAt(enc4);
+        output = output +
+                keyStr.charAt(enc1) +
+                keyStr.charAt(enc2) +
+                keyStr.charAt(enc3) +
+                keyStr.charAt(enc4);
         chr1 = chr2 = chr3 = "";
         enc1 = enc2 = enc3 = enc4 = "";
     } while (i < input.length);
@@ -1356,11 +1387,11 @@ function encode64(input) {
 //
 function isodatetime() {
     var today = new Date();
-    var year  = today.getYear();
+    var year = today.getYear();
     if (year < 2000)    // Y2K Fix, Isaac Powell
-    year = year + 1900; // http://onyx.idbsu.edu/~ipowell
+        year = year + 1900; // http://onyx.idbsu.edu/~ipowell
     var month = today.getMonth() + 1;
-    var day  = today.getDate();
+    var day = today.getDate();
     var hour = today.getHours();
     var hourUTC = today.getUTCHours();
     var diff = hour - hourUTC;
@@ -1370,33 +1401,42 @@ function isodatetime() {
     var minutedifference;
     var second = today.getSeconds();
     var timezone;
-    if (minute != minuteUTC && minuteUTC < 30 && diff < 0) { hourdifference--; }
-    if (minute != minuteUTC && minuteUTC > 30 && diff > 0) { hourdifference--; }
+    if (minute != minuteUTC && minuteUTC < 30 && diff < 0) {
+        hourdifference--;
+    }
+    if (minute != minuteUTC && minuteUTC > 30 && diff > 0) {
+        hourdifference--;
+    }
     if (minute != minuteUTC) {
-    minutedifference = ":30";
+        minutedifference = ":30";
     }
     else {
-    minutedifference = ":00";
+        minutedifference = ":00";
     }
-    if (hourdifference < 10) { 
-    timezone = "0" + hourdifference + minutedifference;
+    if (hourdifference < 10) {
+        timezone = "0" + hourdifference + minutedifference;
     }
     else {
-    timezone = "" + hourdifference + minutedifference;
+        timezone = "" + hourdifference + minutedifference;
     }
     if (diff < 0) {
-    timezone = "-" + timezone;
+        timezone = "-" + timezone;
     }
     else {
-    timezone = "+" + timezone;
+        timezone = "+" + timezone;
     }
-    if (month <= 9) month = "0" + month;
-    if (day <= 9) day = "0" + day;
-    if (hour <= 9) hour = "0" + hour;
-    if (minute <= 9) minute = "0" + minute;
-    if (second <= 9) second = "0" + second;
+    if (month <= 9)
+        month = "0" + month;
+    if (day <= 9)
+        day = "0" + day;
+    if (hour <= 9)
+        hour = "0" + hour;
+    if (minute <= 9)
+        minute = "0" + minute;
+    if (second <= 9)
+        second = "0" + second;
     time = year + "-" + month + "-" + day + "T"
-    + hour + ":" + minute + ":" + second + timezone;
+            + hour + ":" + minute + ":" + second + timezone;
     return time;
 }
 
@@ -1418,7 +1458,7 @@ function isodatetime() {
 function wsse(Password) {
     var PasswordDigest, Nonce, Created;
     var r = new Array;
-    
+
 //    Nonce = b64_sha1(isodatetime() + 'There is more than words');
     Nonce = b64_sha1(isodatetime() + Math.floor((Math.random() * 999999999) + 1));
     nonceEncoded = encode64(Nonce);
