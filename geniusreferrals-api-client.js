@@ -1,10 +1,11 @@
-//Defining the Genius API namespace
-var genius = {
-    baseurl: "https://api.geniusreferrals.com"
+//Defining the Genius Referral API namespace.
+var gr = {
+    baseUrl: "https://api.geniusreferrals.com",
+    apiVersion : "1.0"  
 };
 
-//Defining the Genius Referral authentication object
-genius.auth = function(clientEmail, apiToken) {
+//Defining the authentication object.
+gr.auth = function(clientEmail, apiToken) {
     this.clientEmail = clientEmail;
     this.apiToken = apiToken;
 };
@@ -14,37 +15,36 @@ genius.auth = function(clientEmail, apiToken) {
  * 
  * @return string WSSE Header
  */
-genius.auth.prototype.generateWSSEHeader = function() {
+gr.auth.prototype.generateWSSEHeader = function() {
     return wsseHeader(this.clientEmail, this.apiToken);
 };
 
 //Client
-genius.client = function() {
+gr.client = function() {
 };
 
 /**
- * Returns the API URL 
+ * Returns the API URL. 
  *
  * @return string API URL
  */
-genius.client.prototype.getApiUrl = function() {
-    return genius.baseurl;
+gr.client.prototype.getApiUrl = function() {
+    return gr.baseUrl;
 };
 
 
 /**
  * Add common filters to a given API URI.
  *
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -55,7 +55,7 @@ genius.client.prototype.getApiUrl = function() {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return string
  */
-genius.client.prototype.addCommonFilters = function(page, limit, filter, sort) {
+gr.client.prototype.addCommonFilters = function(page, limit, filter, sort) {
 
     var params = ['page=' + page, 'limit=' + limit];
 
@@ -71,44 +71,40 @@ genius.client.prototype.addCommonFilters = function(page, limit, filter, sort) {
 
 
 /**
- * Get Genius Referral Core API Root resource.
+ * Get Genius Referral REST API Root resource.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @return jqXHR object
  */
-genius.client.prototype.getRoot = function(auth) {
+gr.client.prototype.getRoot = function(auth) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     return $.ajax({
-        url: genius.baseurl + '/',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/',
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 
 /**
- * Get the list of Genius Referrals client accounts.
+ * Get the list of client accounts.
  * 
- * @param object auth Genius Referral authentication object
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -119,7 +115,7 @@ genius.client.prototype.getRoot = function(auth) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getAccounts = function(auth, page, limit, filter, sort) {
+gr.client.prototype.getAccounts = function(auth, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     page = typeof page !== 'undefined' ? page : 1;
@@ -127,66 +123,59 @@ genius.client.prototype.getAccounts = function(auth, page, limit, filter, sort) 
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get a Genius Referrals client account by a given slug.
+ * Get a client account.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
  * @return jqXHR object
  */
-genius.client.prototype.getAccount = function(auth, account_slug) {
+gr.client.prototype.getAccount = function(auth, account_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get the list of Genius Referrals advocates for a given program.
+ * Get the list of advocates.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -197,7 +186,7 @@ genius.client.prototype.getAccount = function(auth, account_slug) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getAdvocates = function(auth, account_slug, page, limit, filter, sort) {
+gr.client.prototype.getAdvocates = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     page = typeof page !== 'undefined' ? page : 1;
@@ -205,49 +194,43 @@ genius.client.prototype.getAdvocates = function(auth, account_slug, page, limit,
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/advocates',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get a Genius Referrals advocate by a given token.
+ * Get an advocate.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param string advocate_token The advocate token
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
  * @return jqXHR object
  */
-genius.client.prototype.getAdvocate = function(auth, account_slug, advocate_token) {
+gr.client.prototype.getAdvocate = function(auth, account_slug, advocate_token) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -255,19 +238,18 @@ genius.client.prototype.getAdvocate = function(auth, account_slug, advocate_toke
 /**
  * Get the advocate's payment methods.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param string advocate_token The advocate token 
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token 
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -278,7 +260,7 @@ genius.client.prototype.getAdvocate = function(auth, account_slug, advocate_toke
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
+gr.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
@@ -287,21 +269,18 @@ genius.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug,
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -309,49 +288,45 @@ genius.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug,
 /**
  * Get an advocate's payment method.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param string advocate_token The advocate token
- * @param integer advocate_payment_method_id The payment method id
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
+ * @param integer advocate_payment_method_id. The payment method id
  * @return jqXHR object
  */
-genius.client.prototype.getAdvocatePaymentMethod = function(auth, account_slug, advocate_token, advocate_payment_method_id) {
+gr.client.prototype.getAdvocatePaymentMethod = function(auth, account_slug, advocate_token, advocate_payment_method_id) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
     advocate_payment_method_id = typeof advocate_payment_method_id !== 'undefined' ? advocate_payment_method_id : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods/' + advocate_payment_method_id,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods/' + advocate_payment_method_id,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get the list of referrals for a given advocate.
+ * Get the list of referrals.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param string advocate_token The advocate token 
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token 
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -362,7 +337,7 @@ genius.client.prototype.getAdvocatePaymentMethod = function(auth, account_slug, 
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getReferrals = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
+gr.client.prototype.getReferrals = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
@@ -371,70 +346,63 @@ genius.client.prototype.getReferrals = function(auth, account_slug, advocate_tok
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get a referral by a given id.
+ * Get a referral.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param string advocate_token The advocate token
- * @param integer referral_id The referral id
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
+ * @param integer referral_id. The referral id
  * @return jqXHR object
  */
-genius.client.prototype.getReferral = function(auth, account_slug, advocate_token, referral_id) {
+gr.client.prototype.getReferral = function(auth, account_slug, advocate_token, referral_id) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
     referral_id = typeof referral_id !== 'undefined' ? referral_id : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals/' + referral_id,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals/' + referral_id,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get the list of bonuses for a given advocate.
+ * Get the list of bonuses.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -445,7 +413,7 @@ genius.client.prototype.getReferral = function(auth, account_slug, advocate_toke
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getBonuses = function(auth, account_slug, page, limit, filter, sort) {
+gr.client.prototype.getBonuses = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     page = typeof page !== 'undefined' ? page : 1;
@@ -453,75 +421,69 @@ genius.client.prototype.getBonuses = function(auth, account_slug, page, limit, f
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get a bonus by a given id.
+ * Get a bonus.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer bonus_id The bonus id
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer bonus_id. The bonus id
  * @return jqXHR object
  */
-genius.client.prototype.getBonus = function(auth, account_slug, bonus_id) {
+gr.client.prototype.getBonus = function(auth, account_slug, bonus_id) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     bonus_id = typeof bonus_id !== 'undefined' ? bonus_id : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/' + bonus_id,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/' + bonus_id,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Check if there is a bonus to be given to the advocate. Allows the clients to check if there is a bonus to be given, it simulates the behaivor of a POST request to /accounts/{account_slug}/bonuses resource. This resource is idempotent.
+ * Check if there is a bonus to be given to the advocate. 
+ * Allows the clients to check if there is a bonus to be given, 
+ * it simulates the behaivor of a POST request to /accounts/{account_slug}/bonuses resource. 
+ * This resource is idempotent.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
  * @return jqXHR object
  */
-genius.client.prototype.getBonusesCheckup = function(auth, account_slug) {
+gr.client.prototype.getBonusesCheckup = function(auth, account_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/checkup',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/checkup',
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -529,18 +491,17 @@ genius.client.prototype.getBonusesCheckup = function(auth, account_slug) {
 /**
  * Get the list of bonuses traces.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -551,7 +512,7 @@ genius.client.prototype.getBonusesCheckup = function(auth, account_slug) {
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getBonusesTraces = function(auth, account_slug, page, limit, filter, sort) {
+gr.client.prototype.getBonusesTraces = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     page = typeof page !== 'undefined' ? page : 1;
@@ -559,21 +520,18 @@ genius.client.prototype.getBonusesTraces = function(auth, account_slug, page, li
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/traces',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/traces',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -581,46 +539,42 @@ genius.client.prototype.getBonusesTraces = function(auth, account_slug, page, li
 /**
  * Get a bonus request trace.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer trace_id The trace id
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer trace_id. The trace id
  * @return jqXHR object
  */
-genius.client.prototype.getBonusesTrace = function(auth, account_slug, trace_id) {
+gr.client.prototype.getBonusesTrace = function(auth, account_slug, trace_id) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     trace_id = typeof trace_id !== 'undefined' ? trace_id : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/bonuses/traces/' + trace_id,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/traces/' + trace_id,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get the list of Genius Referrals campaings.
+ * Get the list of campaings.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -631,7 +585,7 @@ genius.client.prototype.getBonusesTrace = function(auth, account_slug, trace_id)
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getCampains = function(auth, account_slug, page, limit, filter, sort) {
+gr.client.prototype.getCampains = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     page = typeof page !== 'undefined' ? page : 1;
@@ -639,49 +593,43 @@ genius.client.prototype.getCampains = function(auth, account_slug, page, limit, 
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/campaigns',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/campaigns',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get a Genius Referrals campaign by a given slug.
+ * Get a Genius Referrals campaign.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param string campaign_slug The campaign slug
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string campaign_slug. The campaign slug
  * @return jqXHR object
  */
-genius.client.prototype.getCampaign = function(auth, account_slug, campaign_slug) {
+gr.client.prototype.getCampaign = function(auth, account_slug, campaign_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     campaign_slug = typeof campaign_slug !== 'undefined' ? campaign_slug : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/campaigns/' + campaign_slug,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/campaigns/' + campaign_slug,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -689,18 +637,17 @@ genius.client.prototype.getCampaign = function(auth, account_slug, campaign_slug
 /**
  * Get the list of redemption requests.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer page Zero based offset index for the results. e.g. 0 would start
- *                     at the first result and 10 would start at the eleventh result.
- * @param integer limit Maximum number of results to return in the response.
- * @param string filter Allowed fields: name. Use the following delimiters to build your
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer page.  The current page, default is 1.
+ * @param integer limit. Maximum number of results to return in the response.
+ * @param string filter. Allowed fields: name. Use the following delimiters to build your
  *                      filters params. The vertical bar ('|') to separate individual filter 
  *                      phrases and a double colon ('::') to separate the names and values. 
  *                      The delimiter of the double colon (':') separates the property name 
  *                      from the comparison value, enabling the comparison value to contain spaces. 
  *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort Allowed fields: name, created. Use sort query-string parameter that 
+ * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
  *                    contains a delimited set of property names. For each property name, sort 
  *                    in ascending order, and for each property prefixed with a dash ('-') sort 
  *                    in descending order. Separate each property name with a vertical bar ('|'),
@@ -711,7 +658,7 @@ genius.client.prototype.getCampaign = function(auth, account_slug, campaign_slug
  *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-genius.client.prototype.getRedemptionRequests = function(auth, account_slug, page, limit, filter, sort) {
+gr.client.prototype.getRedemptionRequests = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
     page = typeof page !== 'undefined' ? page : 1;
@@ -719,75 +666,73 @@ genius.client.prototype.getRedemptionRequests = function(auth, account_slug, pag
     filter = typeof filter !== 'undefined' ? filter : '';
     sort = typeof sort !== 'undefined' ? sort : '';
 
-    var client = new genius.client();
+    var client = new gr.client();
     var filters = client.addCommonFilters(page, limit, filter, sort);
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/accounts/' + account_slug + '/redemption-requests',
+        type: 'GET',
         data: filters,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Get a redemption request by a given id.
+ * Get a redemption request.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer redemption_request_id The redemption request id
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer redemption_request_id. The redemption request id
  * @return jqXHR object
  */
-genius.client.prototype.getRedemptionRequest = function(auth, account_slug, redemption_request_id) {
+gr.client.prototype.getRedemptionRequest = function(auth, account_slug, redemption_request_id) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     redemption_request_id = typeof redemption_request_id !== 'undefined' ? redemption_request_id : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
 
 /**
- * Redeem a redemption request. After the redemption request is created it needs to be redeemed. This will deduct the amount of the advocate unclaimed balance and move the request to the completed state.
+ * Redeem a redemption request. 
+ * After the redemption request is created it needs to be redeemed. 
+ * This will deduct the amount of the advocate's unclaimed balance and 
+ * move the request to the completed state.
  * 
- * @param object auth Genius Referral authentication object
- * @param string account_slug The client account slug
- * @param integer redemption_request_id The redemption request id
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param integer redemption_request_id. The redemption request id
  * @return jqXHR object
  */
-genius.client.prototype.patchRedemptionRequestRedemption = function(auth, account_slug, redemption_request_id) {
+gr.client.prototype.patchRedemptionRequestRedemption = function(auth, account_slug, redemption_request_id) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     redemption_request_id = typeof redemption_request_id !== 'undefined' ? redemption_request_id : '';
 
     return $.ajax({
-        url: genius.baseurl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id + '/redemption',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id + '/redemption',
+        type: 'PATCH',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
+        }
+        ,
         dataFilter: function(data) {
             return data ? $.parseJSON(data) : null;
         }
@@ -797,26 +742,23 @@ genius.client.prototype.patchRedemptionRequestRedemption = function(auth, accoun
 /**
  * Get bonuses redemption methods.
  * 
- * @param object auth Genius Referral authentication object
- * @param string strAdvocateToken The advocate token
+ * @param object auth. Genius Referral authentication object
+ * @param string strAdvocateToken. The advocate token
  * @return jqXHR object
  */
-genius.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocateToken) {
+gr.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocateToken) {
     auth = typeof auth !== 'undefined' ? auth : '';
     filter = 'filter=advocate_token::' + strAdvocateToken;
 
     return $.ajax({
-        url: genius.baseurl + '/reports/bonuses-summary-per-origin',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/reports/bonuses-summary-per-origin',
+        type: 'GET',
         data: filter,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -824,26 +766,23 @@ genius.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdv
 /**
  * Get referrals summary by referral origin.
  * 
- * @param object auth Genius Referral authentication object
- * @param string strAdvocateToken The advocate token
+ * @param object auth. Genius Referral authentication object
+ * @param string strAdvocateToken. The advocate token
  * @return jqXHR object
  */
-genius.client.prototype.getReferralsSummaryPerOriginReport = function(auth, strAdvocateToken) {
+gr.client.prototype.getReferralsSummaryPerOriginReport = function(auth, strAdvocateToken) {
     auth = typeof auth !== 'undefined' ? auth : '';
     filter = 'filter=advocate_token::' + strAdvocateToken;
 
     return $.ajax({
-        url: genius.baseurl + '/reports/referrals-summary-per-origin',
-        type: 'OPTIONS',
+        url: gr.baseUrl + '/reports/referrals-summary-per-origin',
+        type: 'GET',
         data: filter,
-        header: {
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -851,23 +790,18 @@ genius.client.prototype.getReferralsSummaryPerOriginReport = function(auth, strA
 /**
  * Allow clients to test authentication on Genius Referrals platform.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @return jqXHR object
  */
-genius.client.prototype.testAuthentication = function(auth) {
+gr.client.prototype.testAuthentication = function(auth) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     return $.ajax({
-        url: genius.baseurl + '/test-authentication',
-        type: 'OPTIONS',
-        header: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+        url: gr.baseUrl + '/test-authentication',
+        type: 'GET',
+        headers: {
+            "Accept" : "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -875,23 +809,20 @@ genius.client.prototype.testAuthentication = function(auth) {
 /**
  * Get bonuses redemption methods.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @return jqXHR object
  */
-genius.client.prototype.getBonusesRedemptionMethods = function(auth) {
+gr.client.prototype.getBonusesRedemptionMethods = function(auth) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/bonuses-redemption-methods',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/bonuses-redemption-methods',
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -899,25 +830,22 @@ genius.client.prototype.getBonusesRedemptionMethods = function(auth) {
 /**
  * Get bonuses redemption method.
  * 
- * @param object auth Genius Referral authentication object
- * @param string bonuses_redemption_method_slug The bonuses redemption method slug
+ * @param object auth. Genius Referral authentication object
+ * @param string bonuses_redemption_method_slug. The bonuses redemption method slug
  * @return jqXHR object
  */
-genius.client.prototype.getBonusRedemptionMethod = function(bonuses_redemption_method_slug) {
+gr.client.prototype.getBonusRedemptionMethod = function(bonuses_redemption_method_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     bonuses_redemption_method_slug = typeof bonuses_redemption_method_slug !== 'undefined' ? bonuses_redemption_method_slug : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/bonuses-redemption-methods/' + bonuses_redemption_method_slug,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/bonuses-redemption-methods/' + bonuses_redemption_method_slug,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -925,23 +853,20 @@ genius.client.prototype.getBonusRedemptionMethod = function(bonuses_redemption_m
 /**
  * Get currencies.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @return jqXHR object
  */
-genius.client.prototype.getCurrencies = function(auth) {
+gr.client.prototype.getCurrencies = function(auth) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/currencies',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/currencies',
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -949,25 +874,22 @@ genius.client.prototype.getCurrencies = function(auth) {
 /**
  * Get a currency.
  * 
- * @param object auth Genius Referral authentication object
- * @param string code The bonuses redemption method slug
+ * @param object auth. Genius Referral authentication object
+ * @param string code. The bonuses redemption method slug
  * @return jqXHR object
  */
-genius.client.prototype.getCurrency = function(code) {
+gr.client.prototype.getCurrency = function(code) {
     auth = typeof auth !== 'undefined' ? auth : '';
     code = typeof code !== 'undefined' ? code : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/currencies/' + code,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/currencies/' + code,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -975,23 +897,20 @@ genius.client.prototype.getCurrency = function(code) {
 /**
  * Get redemption request actions.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @return jqXHR object
  */
-genius.client.prototype.getRedemptionRequestsActions = function(auth) {
+gr.client.prototype.getRedemptionRequestsActions = function(auth) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/redemption-request-actions',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/redemption-request-actions',
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -999,25 +918,22 @@ genius.client.prototype.getRedemptionRequestsActions = function(auth) {
 /**
  * Get a redemption request action.
  * 
- * @param object auth Genius Referral authentication object
- * @param string redemption_request_action_slug The redemption request action slug
+ * @param object auth. Genius Referral authentication object
+ * @param string redemption_request_action_slug. The redemption request action slug
  * @return jqXHR object
  */
-genius.client.prototype.getRedemptionRequestAction = function(redemption_request_action_slug) {
+gr.client.prototype.getRedemptionRequestAction = function(redemption_request_action_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     redemption_request_action_slug = typeof redemption_request_action_slug !== 'undefined' ? redemption_request_action_slug : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/currencies/' + redemption_request_action_slug,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/currencies/' + redemption_request_action_slug,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -1025,23 +941,20 @@ genius.client.prototype.getRedemptionRequestAction = function(redemption_request
 /**
  * Get redemption request statuses.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @return jqXHR object
  */
-genius.client.prototype.getRedemptionRequestStatuses = function(auth) {
+gr.client.prototype.getRedemptionRequestStatuses = function(auth) {
     auth = typeof auth !== 'undefined' ? auth : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/redemption-request-statuses',
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/redemption-request-statuses',
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -1049,25 +962,22 @@ genius.client.prototype.getRedemptionRequestStatuses = function(auth) {
 /**
  * Get a redemption request status.
  * 
- * @param object auth Genius Referral authentication object
+ * @param object auth. Genius Referral authentication object
  * @param string redemption_request_status_slug The redemption request status slug
  * @return jqXHR object
  */
-genius.client.prototype.getRedemptionRequestStatus = function(redemption_request_status_slug) {
+gr.client.prototype.getRedemptionRequestStatus = function(redemption_request_status_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     redemption_request_status_slug = typeof redemption_request_status_slug !== 'undefined' ? redemption_request_status_slug : '';
 
     return $.ajax({
-        url: genius.baseurl + '/utilities/redemption-request-statuses/' + redemption_request_status_slug,
-        type: 'OPTIONS',
-        header: {
+        url: gr.baseUrl + '/utilities/redemption-request-statuses/' + redemption_request_status_slug,
+        type: 'GET',
+        headers: {
             "HTTP_ACCEPT": "application/json",
             "CONTENT_TYPE": "application/json",
             "Authorization": 'WSSE profile="UsernameToken"',
             "X-WSSE": auth.generateWSSEHeader()
-        },
-        dataFilter: function(data) {
-            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -1459,12 +1369,11 @@ function wsse(Password) {
     var PasswordDigest, Nonce, Created;
     var r = new Array;
 
-//    Nonce = b64_sha1(isodatetime() + 'There is more than words');
     Nonce = b64_sha1(isodatetime() + Math.floor((Math.random() * 999999999) + 1));
     nonceEncoded = encode64(Nonce);
     Created = isodatetime();
-    PasswordDigest = b64_sha1(Nonce + Created + Password);
-
+    PasswordDigest = b64_sha1(nonceEncoded + Created + Password);
+    
     r[0] = nonceEncoded;
     r[1] = Created;
     r[2] = PasswordDigest;
@@ -1473,10 +1382,6 @@ function wsse(Password) {
 
 function wsseHeader(Username, Password) {
     var w = wsse(Password);
-//    var header = 'UsernameToken Username="' + Username + '", PasswordDigest="' + w[2] + '", Created="' + w[1] + '", Nonce="' + w[0] + '"';
     var header = 'UsernameToken Username="' + Username + '", PasswordDigest="' + w[2] + '", Nonce="' + w[0] + '", Created="' + w[1] + '"';
     return header;
 }
-
-
-
