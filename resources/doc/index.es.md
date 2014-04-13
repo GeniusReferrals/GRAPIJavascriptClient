@@ -1,7 +1,7 @@
 Descripción:
 ------------
 
-Genius Referrals en un intento de mejorar el proceso de integración con sus servicios ha creado esta bibliotecam (cliente). La cual permite a sus clientes, a través de Javascript, consumir los recursos de su RESTful API localizada en http://api.geniusreferrals.com/doc/ . 
+Genius Referrals en un intento de mejorar el proceso de integración con sus servicios ha creado esta biblioteca (cliente). La cual permite a sus clientes, a través de Javascript, consumir los recursos de su RESTful API localizada en http://api.geniusreferrals.com/doc/ . 
 
 Instalación:
 ------------
