@@ -1,49 +1,8 @@
-JavascriptClient
-================
+GRAPIJavascriptClient
+=====================
 
-Instalando Genius Referral Javascript API
-- Genius Referral Javascript API requiere la librarÌa jQuery para funcionar por lo que primeramente usted debe incluirla en su proyecto.
+GRAPIJavascriptClient es el biblioteca de Javascript para consumir la API (RESTful) de la plataforma Genius Referrals.
 
-- Para utilizar la API Javascript de Genius Referrals directamente desde sus productos descarge el cliente JS de Genius Referral API ubicado en [https://github.com/GeniusReferrals/GRAPIJavascriptClient] e incluyalo en su proyecto.
+Genius Referrals es una plataforma de marketing de referencia y marketing de boca a boca (word of mouse) que permite a cualquier empresa integrar de manera r√°pida, sencilla y a un buen precio servicios de marketing de referencia. Para mas informaci√≥n, por favor revise www.geniusreferrals.com.
 
-A continuaciÛn se muestra un ejemplo de como utilizar el cliente javascript Genius Referral:
-
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Genius Referral API Javascript Client - Example</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script type="text/javascript" src="/path/to/genius-api-client.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-
-                // Enter the Genius Referral client email and API token  - to handle any unauthenticated requests in the code.
-                var clientEmail = 'client1@mail.com';
-                var apiToken = '3433148';
-
-                //Defining the Genius Referral authentication object
-                var auth = new genius.auth(clientEmail, apiToken);
-                
-                //Defining the Genius Referral client object
-                var client = new genius.client();
-				
-                // Get the list of Genius Referrals client accounts.
-                var response = client.getRoot(auth);
-                
-                response.done(function(data, textStatus, jqXHR) {
-                    ***
-                });
-                response.fail(function(jqXHR, textStatus) {
-                    ***
-                });
-            });
-        </script>   
-    </head>
-        <body>
-            <div>Genius Referral API Javascript Client</div>
-        </body>
-</html>     
-
+Documentaci√≥n en Espanol
