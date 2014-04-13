@@ -10,7 +10,7 @@ El proceso de instalación de este cliente es bien sencillo, solo en tres pasos.
 
 1- Agregar la biblioteca jQuery a su página Web. 
 
-Hay varias vías para integrar jQuery a su página Web, para consultar otras vías dirigirse al sitio de jQuery www.jquery.com. En este ejemplo vamos a agregar jQuery utilizando la etiqueta script. Agregue la siguiente etiqueta en la sección head de su página.
+Hay varias vías para integrar jQuery a su página Web, para consultar otras vías dirigirse al sitio de jQuery www.jquery.com. En este ejemplo vamos a agregar jQuery utilizando la etiqueta script. Agregue la etiqueta en la sección head de su página.
 
 ```
 <!DOCTYPE html>
@@ -42,7 +42,7 @@ Utilize la etiqueta script para agregar la biblioteca a su página Web.
     </body>
 </html>
 ``` 
-Después de estos pasos de instalación cargue su página en un navegador web y revise que la bibliotecas de jQuery y el cliente GRAPIJavascriptClient fueron cargadas exitosamente.
+Después de estos pasos de instalación cargue su página en un navegador web y revise que la bibliotecas de jQuery y GRAPIJavascriptClient fueron cargadas exitosamente.
 
 Si necesita más ayuda revise este ejemplo: 
 
