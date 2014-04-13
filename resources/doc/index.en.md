@@ -63,7 +63,9 @@ Should you need more help with the instalation please review this:
 Examples:
 ---------
 
-We have implemented severals examples to show you to utilize the client. Please check them out here [Integration examples](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html)
+We have implemented severals examples to show you how to utilize the client. Please check them out here [Integration examples](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html).
+
+For you to be able to test the examples you must substitute the parameters YOUR_USERNAME y YOUR_API_TOKEN on file [geniusreferrals-test.js](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.js) by the proper username and api token assigned to you on Genius Referrals platform.
 
 
 Reporting an issue or a feature request
