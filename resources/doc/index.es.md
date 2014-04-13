@@ -1,7 +1,7 @@
 Descripción:
 ------------
 
-Genius Referrals en un intento de mejorar el proceso de integración con sus servicios ha creado esta biblioteca. La cual permite a sus clientes, a través de Javascript, consumir los recursos de su RESTful API localizada en http://api.geniusreferrals.com/doc/ . 
+Genius Referrals en un intento de mejorar el proceso de integración con sus servicios ha creado esta bibliotecam (cliente). La cual permite a sus clientes, a través de Javascript, consumir los recursos de su RESTful API localizada en http://api.geniusreferrals.com/doc/ . 
 
 Instalación:
 ------------
@@ -42,7 +42,7 @@ Utilize la etiqueta script para agregar la biblioteca a su página Web.
     </body>
 </html>
 ``` 
-Después de estos pasos de instalación cargue su página en un navegador web y revise que la bibliotecas de jQuery y GRAPIJavascriptClient fueron cargadas exitosamente.
+Después de estos pasos de instalación cargue su página en un navegador Web y revise que la bibliotecas de jQuery y GRAPIJavascriptClient fueron cargadas exitosamente.
 
 Si necesita más ayuda revise este ejemplo: 
 
@@ -51,7 +51,7 @@ Si necesita más ayuda revise este ejemplo:
 Ejemplos:
 ---------
 
-Hemos implementado varios ejemplos donde se muestra cómo utilizar la biblioteca. Mas detalles aquí [ejemplos de integración](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html)
+Hemos implementado varios ejemplos donde se muestra cómo utilizar la biblioteca. Por favor revise [Ejemplos de integración](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html)
 
 Reportando un problema o nueva funcionalidad:
 ---------------------------------------------
