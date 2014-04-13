@@ -27,6 +27,14 @@ In this particular case we are going to add jQuery to our Web page using the tag
 
 2- Download the GRAPIJavascriptClient client
 
+Clone the client using git inside your project: 
+
+```
+git clone git@github.com:GeniusReferrals/GRAPIJavascriptClient.git
+```
+
+OR
+
 Download the zip client using this link [GRAPIJavascriptClient](https://github.com/GeniusReferrals/GRAPIJavascriptClient/archive/master.zip), 
 unzip the package and save it in a folder under your project directory with public access, example: /web. 
 
