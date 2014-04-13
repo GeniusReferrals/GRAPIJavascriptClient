@@ -61,7 +61,7 @@ Ejemplos:
 
 Hemos implementado varios ejemplos donde se muestra cómo utilizar la biblioteca. Por favor revise [Ejemplos de integración](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html). 
 
-Para probar los ejemplos debe sustituir los parameters YOUR_USERNAME y YOUR_API_TOKEN que aparecen en el archivo [geniusreferrals-test.js](GRAPIJavascriptClient/tests/geniusreferrals-test.js) por su usuario y api token asignados en la plataforma Genius Referrals.
+Para probar los ejemplos debe sustituir los parameters YOUR_USERNAME y YOUR_API_TOKEN que aparecen en el archivo [geniusreferrals-test.js](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.js) por su usuario y api token asignados en la plataforma Genius Referrals.
 
 Reportando un problema o nueva funcionalidad:
 ---------------------------------------------
