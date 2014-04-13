@@ -2,7 +2,7 @@ Description:
 ------------
 
 Genius Referrals in a intent to improve the integration process with its clients has created this library. 
-Which allow customers to consume, using Javascript, all Genius Referrals RESTful API resources located at http://api.geniusreferrals.com/doc/ . 
+Which allows customers to consume, using Javascript, all Genius Referrals RESTful API resources located at http://api.geniusreferrals.com/doc/ . 
 
 Instalation:
 ------------
