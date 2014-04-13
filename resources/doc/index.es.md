@@ -8,7 +8,7 @@ Instalación:
 
 El proceso de instalación de este cliente es bien sencillo, solo en tres pasos. 
 
-1- Agregar la biblioteca jQuery a su página Web. 
+### 1- Agregar la biblioteca jQuery a su página Web. 
 
 Hay varias vías para integrar jQuery a su página Web, para consultar otras vías dirigirse al sitio de jQuery www.jquery.com. En este ejemplo vamos a agregar jQuery utilizando la etiqueta script. Agregue la etiqueta en la sección head de su página.
 
@@ -23,11 +23,19 @@ Hay varias vías para integrar jQuery a su página Web, para consultar otras ví
 </html>
 ``` 
 
-2- Descargar la biblioteca GRAPIJavascriptClient 
+### 2- Descargar la biblioteca GRAPIJavascriptClient 
+
+Clone la biblioteca usando git dentro de su proyecto: 
+
+```
+git clone git@github.com:GeniusReferrals/GRAPIJavascriptClient.git
+```
+
+#### O
 
 Descargue la biblioteca compactada utilizando este vínculo [GRAPIJavascriptClient](https://github.com/GeniusReferrals/GRAPIJavascriptClient/archive/master.zip) , descompactela y guardela en un directorio en su proyecto que sea de acceso público, ejemplo: /web 
 
-3- Agregar la biblioteca GRAPIJavascriptClient en su página Web. 
+### 3- Agregar la biblioteca GRAPIJavascriptClient en su página Web. 
 
 Utilize la etiqueta script para agregar la biblioteca a su página Web. 
       
@@ -51,7 +59,9 @@ Si necesita más ayuda revise este ejemplo:
 Ejemplos:
 ---------
 
-Hemos implementado varios ejemplos donde se muestra cómo utilizar la biblioteca. Por favor revise [Ejemplos de integración](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html)
+Hemos implementado varios ejemplos donde se muestra cómo utilizar la biblioteca. Por favor revise [Ejemplos de integración](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html). 
+
+Para probar los ejemplos debe sustituir los parameters YOUR_USERNAME y YOUR_API_TOKEN que aparecen en el archivo [geniusreferrals-test.js](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.js) por su usuario y api token asignados en la plataforma Genius Referrals.
 
 Reportando un problema o nueva funcionalidad:
 ---------------------------------------------
