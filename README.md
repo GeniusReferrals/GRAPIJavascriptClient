@@ -2,11 +2,11 @@ JavascriptClient
 ================
 
 Instalando Genius Referral Javascript API
-- Genius Referral Javascript API requiere la libraría jQuery para funcionar por lo que primeramente usted debe incluirla en su proyecto.
+- Genius Referral Javascript API requiere la librarï¿½a jQuery para funcionar por lo que primeramente usted debe incluirla en su proyecto.
 
 - Para utilizar la API Javascript de Genius Referrals directamente desde sus productos descarge el cliente JS de Genius Referral API ubicado en [https://github.com/GeniusReferrals/GRAPIJavascriptClient] e incluyalo en su proyecto.
 
-A continuación se muestra un ejemplo de como utilizar el cliente javascript Genius Referral:
+A continuaciï¿½n se muestra un ejemplo de como utilizar el cliente javascript Genius Referral:
 
 
 <!DOCTYPE html>
@@ -21,22 +21,22 @@ A continuación se muestra un ejemplo de como utilizar el cliente javascript Geni
             $(document).ready(function() {
 
                 // Enter the Genius Referral client email and API token  - to handle any unauthenticated requests in the code.
-                var clientEmail = 'client1@mail.com';
-                var apiToken = '3433148';
+                var clientEmail = 'YOUR_USERNAME';
+                var apiToken = 'YOUR_API_TOKEN';
 
                 //Defining the Genius Referral authentication object
-                var auth = new genius.auth(clientEmail, apiToken);
+                var auth = new gr.auth(clientEmail, apiToken);
                 
                 //Defining the Genius Referral client object
-                var client = new genius.client();
+                var client = new gr.client();
 				
                 // Get the list of Genius Referrals client accounts.
-                var response = client.getRoot(auth);
+                var response = client.testAuthentication(auth);
                 
-                response.done(function(data, textStatus, jqXHR) {
+                response.successs(function(data) {
                     ***
                 });
-                response.fail(function(jqXHR, textStatus) {
+                response.fail(function(data) {
                     ***
                 });
             });

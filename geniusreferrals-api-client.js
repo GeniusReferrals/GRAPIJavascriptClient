@@ -1,7 +1,7 @@
 //Defining the Genius Referral API namespace.
 var gr = {
     baseUrl: "https://api.geniusreferrals.com",
-    apiVersion : "1.0"  
+    apiVersion: "1.0"
 };
 
 //Defining the authentication object.
@@ -39,20 +39,20 @@ gr.client.prototype.getApiUrl = function() {
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
  * @param string filter. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return string
  */
 gr.client.prototype.addCommonFilters = function(page, limit, filter, sort) {
@@ -62,7 +62,7 @@ gr.client.prototype.addCommonFilters = function(page, limit, filter, sort) {
     if (filter != '') {
         params.push('filter=' + filter);
     }
-    if (filter != '') {
+    if (sort != '') {
         params.push('sort=' + sort);
     }
 
@@ -83,9 +83,7 @@ gr.client.prototype.getRoot = function(auth) {
         url: gr.baseUrl + '/',
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -99,20 +97,20 @@ gr.client.prototype.getRoot = function(auth) {
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
  * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: name, created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getAccounts = function(auth, page, limit, filter, sort) {
@@ -131,9 +129,7 @@ gr.client.prototype.getAccounts = function(auth, page, limit, filter, sort) {
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -154,9 +150,7 @@ gr.client.prototype.getAccount = function(auth, account_slug) {
         url: gr.baseUrl + '/accounts/' + account_slug,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -169,26 +163,27 @@ gr.client.prototype.getAccount = function(auth, account_slug) {
  * @param string account_slug. The client account slug
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: name, lastname, email, bonus_exchange_method_slug, campaign_slug, from, to, created.
+ *                       Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: name, lastname, email , created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getAdvocates = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -202,10 +197,46 @@ gr.client.prototype.getAdvocates = function(auth, account_slug, page, limit, fil
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Create a new Genius Referral advocate.
+ *
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param array arrParams.
+ * Request Format All parameters in the content of the request are mandatory.
+ * {
+ *       "advocate":{
+ *           "name":"Jonh",
+ *           "lastname":"Smith",
+ *           "email": "jonh@email.com",
+ *           "payout_threshold":10
+ *       }
+ * }
+ * @return jqXHR object
+ */
+gr.client.prototype.postAdvocate = function(auth, account_slug, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates',
+        type: 'POST',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -227,10 +258,54 @@ gr.client.prototype.getAdvocate = function(auth, account_slug, advocate_token) {
         url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Update partial elements of an advocate. Use this method when you do not need to update all the elements at the same time. 
+ * Allowed parameters to be updated are: name, lastname, email, payout_threshold, claimed_balance, unclaimed_balance, 
+ * campaign_slug, currency_code, advocate_referrer_token.
+ *
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
+ * @param array arrParams.
+ * Request Format
+ * {
+ *   "name":"Jonh",
+ *   "lastname":"Smith",
+ *   "email": "jonh_at_email.com",
+ *   "payout_threshold":10,
+ *   advocate_referrer_token=4f31f3470dca3161b4f3f14a8c67ac1e56dc93d1
+ * }
+ * -- OR --
+ * {"name":"Jonh"}
+ * -- OR send a query string like this --
+ * payout_threshold=10&claimed_balance=10&unclaimed_balance=10&campaign_slug=get-10-of-for-90-days&currency_code=EUR
+ * 
+ * @return jqXHR object
+ */
+gr.client.prototype.patchAdvocate = function(auth, account_slug, advocate_token, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token,
+        type: 'PATCH',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -243,27 +318,27 @@ gr.client.prototype.getAdvocate = function(auth, account_slug, advocate_token) {
  * @param string advocate_token. The advocate token 
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: username, is_active. Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: username, created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -277,10 +352,47 @@ gr.client.prototype.getAdvocatePaymentMethods = function(auth, account_slug, adv
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Create a new payment method.
+ *
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
+ * @param array arrParams.
+ * Request Format All parameters in the content of the request are mandatory.
+ * {
+ *       "advocate_payment_method":{
+ *           "username":"advocate_at_email.com",
+ *           "description":"My main paypal account",
+ *           "is_active": true
+ *       }
+ * }
+ * @return jqXHR object
+ */
+gr.client.prototype.postAdvocatePaymentMethod = function(auth, account_slug, advocate_token, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods',
+        type: 'POST',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -304,10 +416,49 @@ gr.client.prototype.getAdvocatePaymentMethod = function(auth, account_slug, advo
         url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods/' + advocate_payment_method_id,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Update a payment method.
+ * 
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug The client account slug
+ * @param string advocate_token The advocate token
+ * @param integer advocate_payment_method_id The payment method id
+ * @param array arrParams
+ * Request Format All parameters in the content of the request are mandatory.
+ * {
+ *       "advocate_payment_method":{
+ *           "username":"advocate_at_email.com",
+ *           "description":"My main paypal account",
+ *           "is_active": true
+ *       }
+ * }
+ * @return jqXHR object
+ */
+gr.client.prototype.putAdvocatePaymentMethod = function(auth, account_slug, advocate_token, advocate_payment_method_id, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+    advocate_payment_method_id = typeof advocate_payment_method_id !== 'undefined' ? advocate_payment_method_id : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/payment-methods/' + advocate_payment_method_id,
+        type: 'PUT',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -320,27 +471,27 @@ gr.client.prototype.getAdvocatePaymentMethod = function(auth, account_slug, advo
  * @param string advocate_token. The advocate token 
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: url, referral_origin_slug, created. Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getReferrals = function(auth, account_slug, advocate_token, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
-    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -354,9 +505,7 @@ gr.client.prototype.getReferrals = function(auth, account_slug, advocate_token, 
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -381,10 +530,48 @@ gr.client.prototype.getReferral = function(auth, account_slug, advocate_token, r
         url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals/' + referral_id,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Create a new Genius Referral referral.
+ * 
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
+ * @param array arrParams.
+ * Request Format All parameters in the content of the request are mandaroty.
+ * {
+ *       "referral":{
+ *           "referred_advocate_token":"10e33ae1b516873a8fe62880652759d558e27424",
+ *           "referral_origin_slug": "facebook-share",
+ *           "campaign_slug":"get-10-of-for-90-days",
+ *           "http_referer":"http://www.google.com",
+ *       }
+ * }
+ * @return jqXHR object
+ */
+gr.client.prototype.postReferral = function(auth, account_slug, advocate_token, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/referrals',
+        type: 'POST',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -396,26 +583,26 @@ gr.client.prototype.getReferral = function(auth, account_slug, advocate_token, r
  * @param string account_slug. The client account slug
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: name, lastname, email, campaign_slug, from, to, created. Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: name, lastname, email, created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getBonuses = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -429,10 +616,49 @@ gr.client.prototype.getBonuses = function(auth, account_slug, page, limit, filte
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Create a new bonus for a given advocate token. The system processes the advocate and creates a bonus for the 
+ * advocate's referrer if is needed. 
+ * All restrictions set on the campaigns for this account will be check out before giving the bonus to the 
+ * advocate's referrer.
+ * 
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param array arrParams.
+ * Request Format Not all parameters in the content of the request are mandatory. Parameters amount_of_payments and payment_amount are optional.
+ * {
+ *       "bonus":{
+ *           "advocate_token":"7c4ae87701ef6e6c9ab64941215da6b1f90f5c7a",
+ *           "reference": "HSY7292D00",
+ *           "amount_of_payments": 3,
+ *           "payment_amount": 10
+ *       }
+ * }
+ * @return jqXHR object
+ */
+gr.client.prototype.postBonuses = function(auth, account_slug, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses',
+        type: 'POST',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -454,9 +680,7 @@ gr.client.prototype.getBonus = function(auth, account_slug, bonus_id) {
         url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/' + bonus_id,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -470,19 +694,30 @@ gr.client.prototype.getBonus = function(auth, account_slug, bonus_id) {
  * 
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
+ * @param array arrParams.
+     * Request Format Not all parameters in the content of the request are mandatory. 
+     * Parameters amount_of_payments and payment_amount are optional.
+     * {
+     *     "advocate_token":"7c4ae87701ef6e6c9ab64941215da6b1f90f5c7a",
+     *     "reference": "HSY7292D00",
+     *     "amount_of_payments": 3,
+     *     "payment_amount": 10
+     * }
  * @return jqXHR object
  */
-gr.client.prototype.getBonusesCheckup = function(auth, account_slug) {
+gr.client.prototype.getBonusesCheckup = function(auth, account_slug, arrParams) {
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+    
+    filters = arrParams;
 
     return $.ajax({
         url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/checkup',
         type: 'GET',
+        data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -495,26 +730,27 @@ gr.client.prototype.getBonusesCheckup = function(auth, account_slug) {
  * @param string account_slug. The client account slug
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: reference, result, bonus_amount, advocate_token, advocate_referrer_token, campaign_slug, from, to, created. 
+ *                       Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getBonusesTraces = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -528,9 +764,7 @@ gr.client.prototype.getBonusesTraces = function(auth, account_slug, page, limit,
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -553,9 +787,7 @@ gr.client.prototype.getBonusesTrace = function(auth, account_slug, trace_id) {
         url: gr.baseUrl + '/accounts/' + account_slug + '/bonuses/traces/' + trace_id,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -568,26 +800,27 @@ gr.client.prototype.getBonusesTrace = function(auth, account_slug, trace_id) {
  * @param string account_slug. The client account slug
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: name, description, start_date, end_date, is_active (true|false), created. 
+ *                       Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: campaign_slug, created, start_date, end_date, is_active. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
-gr.client.prototype.getCampains = function(auth, account_slug, page, limit, filter, sort) {
+gr.client.prototype.getCampaigns = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -601,9 +834,7 @@ gr.client.prototype.getCampains = function(auth, account_slug, page, limit, filt
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -626,9 +857,7 @@ gr.client.prototype.getCampaign = function(auth, account_slug, campaign_slug) {
         url: gr.baseUrl + '/accounts/' + account_slug + '/campaigns/' + campaign_slug,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -641,26 +870,27 @@ gr.client.prototype.getCampaign = function(auth, account_slug, campaign_slug) {
  * @param string account_slug. The client account slug
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name. Use the following delimiters to build your
- *                      filters params. The vertical bar ('|') to separate individual filter 
- *                      phrases and a double colon ('::') to separate the names and values. 
- *                      The delimiter of the double colon (':') separates the property name 
- *                      from the comparison value, enabling the comparison value to contain spaces. 
- *                      Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort. Allowed fields: name, created. Use sort query-string parameter that 
- *                    contains a delimited set of property names. For each property name, sort 
- *                    in ascending order, and for each property prefixed with a dash ('-') sort 
- *                    in descending order. Separate each property name with a vertical bar ('|'),
- *                    which is consistent with the separation of the name\/value pairs in 
- *                    filtering, above. For example, if we want to retrieve users in order of
- *                    their last name (ascending), first name (ascending) and hire date 
- *                    (descending), the request might look like this 
- *                    www.example.com\/users?sort='last_name|first_name|-hire_date'
+ * @param string filter. Allowed fields: redemption_request_id, name, lastname, email, request_status_slug, request_action_slug, from, to, created. 
+ *                       Use the following delimiters to build your
+ *                       filters params. The vertical bar ('|') to separate individual filter 
+ *                       phrases and a double colon ('::') to separate the names and values. 
+ *                       The delimiter of the double colon (':') separates the property name 
+ *                       from the comparison value, enabling the comparison value to contain spaces. 
+ *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
+ * @param string sort.   Allowed fields: ame, lastname, email, created. Use sort query-string parameter that 
+ *                       contains a delimited set of property names. For each property name, sort 
+ *                       in ascending order, and for each property prefixed with a dash ('-') sort 
+ *                       in descending order. Separate each property name with a vertical bar ('|'),
+ *                       which is consistent with the separation of the name\/value pairs in 
+ *                       filtering, above. For example, if we want to retrieve users in order of
+ *                       their last name (ascending), first name (ascending) and hire date 
+ *                       (descending), the request might look like this 
+ *                       www.example.com\/users?sort='last_name|first_name|-hire_date'
  * @return jqXHR object
  */
 gr.client.prototype.getRedemptionRequests = function(auth, account_slug, page, limit, filter, sort) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    account_slug = typeof account_slug !== 'undefined' ? account_slug : 1;
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     page = typeof page !== 'undefined' ? page : 1;
     limit = typeof limit !== 'undefined' ? limit : 10;
     filter = typeof filter !== 'undefined' ? filter : '';
@@ -674,10 +904,49 @@ gr.client.prototype.getRedemptionRequests = function(auth, account_slug, page, l
         type: 'GET',
         data: filters,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Create a redemption request.
+ * 
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param array arrParams.
+ * Request Format Mandatory parameters: advocate_token, request_status_slug, request_action_slug, currency_code, amount.
+ * {
+ *       "redemption_request":{
+ *               "advocate_token":"k3ibasd723278v2b32389589ihjf",
+ *               "request_status_slug":"requested",
+ *               "request_action_slug": "credit",
+ *               "currency_code":"USD",
+ *               "amount":50,
+ *               "description": "credit",
+ *               "advocates_paypal_username":"alain_at_mail.com"
+ *       }
+ * }
+ * @return jqXHR object
+ */
+gr.client.prototype.postRedemptionRequest = function(auth, account_slug, arrParams) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
+
+    var filters = arrParams;
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/redemption-requests',
+        type: 'POST',
+        data: filters,
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        },
+        dataFilter: function(data) {
+            return data ? $.parseJSON(data) : null;
         }
     });
 };
@@ -699,9 +968,7 @@ gr.client.prototype.getRedemptionRequest = function(auth, account_slug, redempti
         url: gr.baseUrl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -716,6 +983,7 @@ gr.client.prototype.getRedemptionRequest = function(auth, account_slug, redempti
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
  * @param integer redemption_request_id. The redemption request id
+ * 
  * @return jqXHR object
  */
 gr.client.prototype.patchRedemptionRequestRedemption = function(auth, account_slug, redemption_request_id) {
@@ -727,12 +995,9 @@ gr.client.prototype.patchRedemptionRequestRedemption = function(auth, account_sl
         url: gr.baseUrl + '/accounts/' + account_slug + '/redemption-requests/' + redemption_request_id + '/redemption',
         type: 'PATCH',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
-        }
-        ,
+        },
         dataFilter: function(data) {
             return data ? $.parseJSON(data) : null;
         }
@@ -748,16 +1013,16 @@ gr.client.prototype.patchRedemptionRequestRedemption = function(auth, account_sl
  */
 gr.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocateToken) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    filter = 'filter=advocate_token::' + strAdvocateToken;
+    strAdvocateToken = typeof strAdvocateToken !== 'undefined' ? strAdvocateToken : '';
+    
+    filter = 'advocate_token=' + strAdvocateToken;
 
     return $.ajax({
         url: gr.baseUrl + '/reports/bonuses-summary-per-origin',
         type: 'GET',
         data: filter,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -772,16 +1037,16 @@ gr.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocat
  */
 gr.client.prototype.getReferralsSummaryPerOriginReport = function(auth, strAdvocateToken) {
     auth = typeof auth !== 'undefined' ? auth : '';
-    filter = 'filter=advocate_token::' + strAdvocateToken;
+    strAdvocateToken = typeof strAdvocateToken !== 'undefined' ? strAdvocateToken : '';
+    
+    filter = 'advocate_token=' + strAdvocateToken;
 
     return $.ajax({
         url: gr.baseUrl + '/reports/referrals-summary-per-origin',
         type: 'GET',
         data: filter,
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -800,7 +1065,7 @@ gr.client.prototype.testAuthentication = function(auth) {
         url: gr.baseUrl + '/test-authentication',
         type: 'GET',
         headers: {
-            "Accept" : "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -819,9 +1084,7 @@ gr.client.prototype.getBonusesRedemptionMethods = function(auth) {
         url: gr.baseUrl + '/utilities/bonuses-redemption-methods',
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -834,7 +1097,7 @@ gr.client.prototype.getBonusesRedemptionMethods = function(auth) {
  * @param string bonuses_redemption_method_slug. The bonuses redemption method slug
  * @return jqXHR object
  */
-gr.client.prototype.getBonusRedemptionMethod = function(bonuses_redemption_method_slug) {
+gr.client.prototype.getBonusRedemptionMethod = function(auth, bonuses_redemption_method_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     bonuses_redemption_method_slug = typeof bonuses_redemption_method_slug !== 'undefined' ? bonuses_redemption_method_slug : '';
 
@@ -842,9 +1105,7 @@ gr.client.prototype.getBonusRedemptionMethod = function(bonuses_redemption_metho
         url: gr.baseUrl + '/utilities/bonuses-redemption-methods/' + bonuses_redemption_method_slug,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -863,9 +1124,7 @@ gr.client.prototype.getCurrencies = function(auth) {
         url: gr.baseUrl + '/utilities/currencies',
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -878,7 +1137,7 @@ gr.client.prototype.getCurrencies = function(auth) {
  * @param string code. The bonuses redemption method slug
  * @return jqXHR object
  */
-gr.client.prototype.getCurrency = function(code) {
+gr.client.prototype.getCurrency = function(auth, code) {
     auth = typeof auth !== 'undefined' ? auth : '';
     code = typeof code !== 'undefined' ? code : '';
 
@@ -886,9 +1145,7 @@ gr.client.prototype.getCurrency = function(code) {
         url: gr.baseUrl + '/utilities/currencies/' + code,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -907,9 +1164,7 @@ gr.client.prototype.getRedemptionRequestsActions = function(auth) {
         url: gr.baseUrl + '/utilities/redemption-request-actions',
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -922,17 +1177,15 @@ gr.client.prototype.getRedemptionRequestsActions = function(auth) {
  * @param string redemption_request_action_slug. The redemption request action slug
  * @return jqXHR object
  */
-gr.client.prototype.getRedemptionRequestAction = function(redemption_request_action_slug) {
+gr.client.prototype.getRedemptionRequestAction = function(auth, redemption_request_action_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     redemption_request_action_slug = typeof redemption_request_action_slug !== 'undefined' ? redemption_request_action_slug : '';
 
     return $.ajax({
-        url: gr.baseUrl + '/utilities/currencies/' + redemption_request_action_slug,
+        url: gr.baseUrl + '/utilities/redemption-request-actions/' + redemption_request_action_slug,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -951,9 +1204,7 @@ gr.client.prototype.getRedemptionRequestStatuses = function(auth) {
         url: gr.baseUrl + '/utilities/redemption-request-statuses',
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -966,7 +1217,7 @@ gr.client.prototype.getRedemptionRequestStatuses = function(auth) {
  * @param string redemption_request_status_slug The redemption request status slug
  * @return jqXHR object
  */
-gr.client.prototype.getRedemptionRequestStatus = function(redemption_request_status_slug) {
+gr.client.prototype.getRedemptionRequestStatus = function(auth, redemption_request_status_slug) {
     auth = typeof auth !== 'undefined' ? auth : '';
     redemption_request_status_slug = typeof redemption_request_status_slug !== 'undefined' ? redemption_request_status_slug : '';
 
@@ -974,9 +1225,7 @@ gr.client.prototype.getRedemptionRequestStatus = function(redemption_request_sta
         url: gr.baseUrl + '/utilities/redemption-request-statuses/' + redemption_request_status_slug,
         type: 'GET',
         headers: {
-            "HTTP_ACCEPT": "application/json",
-            "CONTENT_TYPE": "application/json",
-            "Authorization": 'WSSE profile="UsernameToken"',
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
             "X-WSSE": auth.generateWSSEHeader()
         }
     });
@@ -1373,7 +1622,7 @@ function wsse(Password) {
     nonceEncoded = encode64(Nonce);
     Created = isodatetime();
     PasswordDigest = b64_sha1(nonceEncoded + Created + Password);
-    
+
     r[0] = nonceEncoded;
     r[1] = Created;
     r[2] = PasswordDigest;
