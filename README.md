@@ -1,49 +1,26 @@
-JavascriptClient
-================
-
-Instalando Genius Referral Javascript API
-- Genius Referral Javascript API requiere la librar�a jQuery para funcionar por lo que primeramente usted debe incluirla en su proyecto.
-
-- Para utilizar la API Javascript de Genius Referrals directamente desde sus productos descarge el cliente JS de Genius Referral API ubicado en [https://github.com/GeniusReferrals/GRAPIJavascriptClient] e incluyalo en su proyecto.
-
-A continuaci�n se muestra un ejemplo de como utilizar el cliente javascript Genius Referral:
+GRAPIJavascriptClient
+=====================
 
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Genius Referral API Javascript Client - Example</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script type="text/javascript" src="/path/to/genius-api-client.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
+In English
+-----------
 
-                // Enter the Genius Referral client email and API token  - to handle any unauthenticated requests in the code.
-                var clientEmail = 'YOUR_USERNAME';
-                var apiToken = 'YOUR_API_TOKEN';
+GRAPIJavascriptClient is the Javascript client to consume the Genius Referrals RESTful API.
 
-                //Defining the Genius Referral authentication object
-                var auth = new gr.auth(clientEmail, apiToken);
-                
-                //Defining the Genius Referral client object
-                var client = new gr.client();
-				
-                // Get the list of Genius Referrals client accounts.
-                var response = client.testAuthentication(auth);
-                
-                response.successs(function(data) {
-                    ***
-                });
-                response.fail(function(data) {
-                    ***
-                });
-            });
-        </script>   
-    </head>
-        <body>
-            <div>Genius Referral API Javascript Client</div>
-        </body>
-</html>     
+Genius Referrals is a referral marketing platform and word of mouse platform that allows 
+any company/person with a Website to increase his costumer acquisition by using word of mouth techniques thought 
+Facebook, Twitter, Google +, Pinterest, Linkedin, Email and personal recommendations.  For more information about Genius referrals please visit www.geniusreferrals.com.
 
+[Instalation and Set up](resources/doc/index.en.md)
+
+
+En Español
+-----------
+
+GRAPIJavascriptClient es el biblioteca(cliente) de Javascript para consumir la RESTful API de la plataforma Genius Referrals.
+
+Genius Referrals es una plataforma de marketing de referencia y marketing de boca a boca (word of mouse). La cual le permite a cualquier 
+empresa/persona con un sitio Web incrementar la adquisición de sus clientes usando técnicas de marketing de boca a boca a través de las redes
+Facebook, Twitter, Google +, Pinterest, Email y recomendaciones personales. Para más información sobre Genius Referrals, por favor visite www.geniusreferrals.com.
+
+[Instalación y Configuración](resources/doc/index.es.md)
