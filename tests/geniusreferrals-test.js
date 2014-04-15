@@ -309,8 +309,8 @@ $(document).ready(function() {
     /*
      * Testing getBonusesCheckup
      */
-    aryBonus = {"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HY7292D00", "amount_of_payments":"3","payment_amount":"10"};
-    var response = client.getBonusesCheckup(auth, 'example-com', aryBonus);
+    aryBonus = '{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HY7292D00", "amount_of_payments":"3","payment_amount":"10"}';
+    var response = client.getBonusesCheckup(auth, 'example-com', $.parseJSON(aryBonus));
     response.success(function(data) {
         console.log(data);
     }); 
