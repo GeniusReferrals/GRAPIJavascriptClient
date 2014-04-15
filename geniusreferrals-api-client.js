@@ -148,7 +148,7 @@ gr.client.prototype.getAccounts = function(auth, page, limit, filter, sort) {
 };
 
 /**
- * Get a client account.
+ * Get an account by a given slug.
  * 
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
@@ -182,7 +182,7 @@ gr.client.prototype.getAccount = function(auth, account_slug) {
  *                       The delimiter of the double colon (':') separates the property name 
  *                       from the comparison value, enabling the comparison value to contain spaces. 
  *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort.   Allowed fields: name, lastname, email , created. Use sort query-string parameter that 
+ * @param string sort.   Allowed fields: name, lastname, email, created. Use sort query-string parameter that 
  *                       contains a delimited set of property names. For each property name, sort 
  *                       in ascending order, and for each property prefixed with a dash ('-') sort 
  *                       in descending order. Separate each property name with a vertical bar ('|'),
@@ -636,14 +636,14 @@ gr.client.prototype.getBonuses = function(auth, account_slug, page, limit, filte
 
 /**
  * Create a new bonus for a given advocate token. The system processes the advocate and creates a bonus for the 
- * advocate's referrer if is needed. 
- * All restrictions set on the campaigns for this account will be check out before giving the bonus to the 
- * advocate's referrer.
+ * advocate's referrer if is needed. All restrictions set on the campaigns for this account will be check out before 
+ * giving the bonus to the advocate's referrer.
  * 
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
  * @param array arrParams.
- * Request Format Not all parameters in the content of the request are mandatory. Parameters amount_of_payments and payment_amount are optional.
+ * Request Format Not all parameters in the content of the request are mandatory. 
+ * Parameters amount_of_payments and payment_amount are optional.
  * {
  *       "bonus":{
  *           "advocate_token":"7c4ae87701ef6e6c9ab64941215da6b1f90f5c7a",
@@ -707,14 +707,12 @@ gr.client.prototype.getBonus = function(auth, account_slug, bonus_id) {
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
  * @param array arrParams.
-     * Request Format Not all parameters in the content of the request are mandatory. 
-     * Parameters amount_of_payments and payment_amount are optional.
-     * {
-     *     "advocate_token":"7c4ae87701ef6e6c9ab64941215da6b1f90f5c7a",
-     *     "reference": "HSY7292D00",
-     *     "amount_of_payments": 3,
-     *     "payment_amount": 10
-     * }
+ * {
+ *     "advocate_token":"7c4ae87701ef6e6c9ab64941215da6b1f90f5c7a",
+ *     "reference": "HSY7292D00",
+ *     "amount_of_payments": 3,
+ *     "payment_amount": 10
+ * }
  * @return jqXHR object
  */
 gr.client.prototype.getBonusesCheckup = function(auth, account_slug, arrParams) {
@@ -889,7 +887,7 @@ gr.client.prototype.getCampaign = function(auth, account_slug, campaign_slug) {
  *                       The delimiter of the double colon (':') separates the property name 
  *                       from the comparison value, enabling the comparison value to contain spaces. 
  *                       Example: www.example.com\/users?filter='name::todd|city::denver|title::grand poobah'
- * @param string sort.   Allowed fields: ame, lastname, email, created. Use sort query-string parameter that 
+ * @param string sort.   Allowed fields: name, lastname, email, created. Use sort query-string parameter that 
  *                       contains a delimited set of property names. For each property name, sort 
  *                       in ascending order, and for each property prefixed with a dash ('-') sort 
  *                       in descending order. Separate each property name with a vertical bar ('|'),
@@ -1017,7 +1015,7 @@ gr.client.prototype.patchRedemptionRequestRedemption = function(auth, account_sl
 };
 
 /**
- * Get bonuses redemption methods.
+ * Get bonuses summary per referral origin.
  * 
  * @param object auth. Genius Referral authentication object
  * @param string strAdvocateToken. The advocate token
@@ -1041,7 +1039,7 @@ gr.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocat
 };
 
 /**
- * Get referrals summary by referral origin.
+ * Get referrals summary per referral origin.
  * 
  * @param object auth. Genius Referral authentication object
  * @param string strAdvocateToken. The advocate token
@@ -1226,7 +1224,7 @@ gr.client.prototype.getRedemptionRequestStatuses = function(auth) {
  * Get a redemption request status.
  * 
  * @param object auth. Genius Referral authentication object
- * @param string redemption_request_status_slug The redemption request status slug
+ * @param string redemption_request_status_slug. The redemption request status slug
  * @return jqXHR object
  */
 gr.client.prototype.getRedemptionRequestStatus = function(auth, redemption_request_status_slug) {

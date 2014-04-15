@@ -81,9 +81,13 @@ $(document).ready(function() {
     var response = client.getAdvocate(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d');
     response.success(function(data) {
         console.log(data);
+        $('#test-advocate-status').text(data.code);
+        $('#test-advocate-message').text(data.data.name);
     });
     response.fail(function(data) {
         console.log(data);
+        $('#test-advocate-status').text(data.status);
+        $('#test-advocate-message').text(data);
     });
 
     /*
@@ -305,19 +309,19 @@ $(document).ready(function() {
     response.fail(function(data) {
         console.log(data);
     });
-    
+
     /*
      * Testing getBonusesCheckup
      */
-    aryBonus = {"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HY7292D00", "amount_of_payments":"3","payment_amount":"10"};
-    var response = client.getBonusesCheckup(auth, 'example-com', aryBonus);
+    aryBonus = '{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HY7292D00", "amount_of_payments":"3","payment_amount":"10"}';
+    var response = client.getBonusesCheckup(auth, 'example-com', $.parseJSON(aryBonus));
     response.success(function(data) {
         console.log(data);
-    }); 
-    response.fail(function (data) {
+    });
+    response.fail(function(data) {
         console.log(data);
     });
-    
+
     /*
      * Testing postAdvocate
      */
@@ -335,10 +339,10 @@ $(document).ready(function() {
      */
     aryAdvocate = '{"name":"Jonh", "lastname":"Smith", "email":"jonh@email.com", "payout_threshold":10}';
     var response = client.patchAdvocate(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', $.parseJSON(aryAdvocate));
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(data);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data);
     });
 
@@ -347,10 +351,10 @@ $(document).ready(function() {
      */
     aryPaymentMethod = '{"advocate_payment_method":{"username":"aa@email.com", "description":"My main paypal account", "is_active":true}}';
     var response = client.postAdvocatePaymentMethod(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', $.parseJSON(aryPaymentMethod));
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(data);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data);
     });
 
@@ -359,10 +363,10 @@ $(document).ready(function() {
      */
     aryPaymentMethod = '{"advocate_payment_method":{"username":"aaaaa@email.com", "description":"My main paypal account", "is_active":true}}';
     var response = client.putAdvocatePaymentMethod(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', 15, $.parseJSON(aryPaymentMethod));
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(data);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data);
     });
 
@@ -371,22 +375,22 @@ $(document).ready(function() {
      */
     aryReferral = '{"referral":{"referred_advocate_token":"8b3856077b4243700c15d3c75d1cf9866253f643","referral_origin_slug":"facebook-share","campaign_slug":"get-10-of-for-90-days","http_referer":"http://www.geniusreferrals.com"}}';
     var response = client.postReferral(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', $.parseJSON(aryReferral));
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(data);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data);
     });
 
     /*
      * Testing postBonuses
      */
-    aryBonus = '{"bonus":{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HSY7292D00","amount_of_payments":3,"payment_amount":10}}'; 
+    aryBonus = '{"bonus":{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HSY7292D00","amount_of_payments":3,"payment_amount":10}}';
     var response = client.postBonuses(auth, 'example-com', $.parseJSON(aryBonus));
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(data);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data);
     });
 
@@ -395,10 +399,10 @@ $(document).ready(function() {
      */
     aryRedemptionRequest = '{"redemption_request":{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","request_status_slug":"processing","request_action_slug":"goods", "currency_code":"USD","amount":50, "description":"credit", "advocates_paypal_username":"alain@mail.com"}}';
     var response = client.postRedemptionRequest(auth, 'example-com', $.parseJSON(aryRedemptionRequest));
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(datat);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data.responseText);
     });
 
@@ -406,10 +410,10 @@ $(document).ready(function() {
      * Testing patchRedemptionRequestRedemption
      */
     var response = client.patchRedemptionRequestRedemption(auth, 'example-com', 3);
-    response.success(function (data) {
+    response.success(function(data) {
         console.log(data);
     });
-    response.fail(function (data) {
+    response.fail(function(data) {
         console.log(data);
     });
 
