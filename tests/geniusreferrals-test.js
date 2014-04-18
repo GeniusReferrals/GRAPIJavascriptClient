@@ -78,7 +78,7 @@ $(document).ready(function() {
     /*
      * Testing getAdvocate
      */
-    var response = client.getAdvocate(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d');
+    var response = client.getAdvocate(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b');
     response.success(function(data) {
         console.log(data);
         $('#test-advocate-status').text(data.code);
@@ -93,7 +93,7 @@ $(document).ready(function() {
     /*
      * Testing getAdvocatePaymentMethods
      */
-    var response = client.getAdvocatePaymentMethods(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', 1, 1, 'username::aaaaa@email.com');
+    var response = client.getAdvocatePaymentMethods(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b');
     response.success(function(data) {
         console.log(data);
     });
@@ -104,7 +104,7 @@ $(document).ready(function() {
     /*
      * Testing getAdvocatePaymentMethod
      */
-    var response = client.getAdvocatePaymentMethod(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', 15);
+    var response = client.getAdvocatePaymentMethod(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b', 1);
     response.success(function(data) {
         console.log(data);
     });
@@ -115,7 +115,7 @@ $(document).ready(function() {
     /*
      * Testing getReferrals
      */
-    var response = client.getReferrals(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d');
+    var response = client.getReferrals(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b');
     response.success(function(data) {
         console.log(data);
     });
@@ -126,7 +126,7 @@ $(document).ready(function() {
     /*
      * Testing getReferral
      */
-    var response = client.getReferral(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', 19);
+    var response = client.getReferral(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b', 1);
     response.success(function(data) {
         console.log(data);
     });
@@ -148,7 +148,7 @@ $(document).ready(function() {
     /*
      * Testing getBonus
      */
-    var response = client.getBonus(auth, 'example-com', 227);
+    var response = client.getBonus(auth, 'example-com', 3);
     response.success(function(data) {
         console.log(data);
     });
@@ -192,7 +192,7 @@ $(document).ready(function() {
     /*
      * Testing getRedemptionRequest
      */
-    var response = client.getRedemptionRequest(auth, 'example-com', 3);
+    var response = client.getRedemptionRequest(auth, 'example-com', 1);
     response.success(function(data) {
         console.log(data);
     });
@@ -203,7 +203,7 @@ $(document).ready(function() {
     /*
      * Testing getBonusesSummaryPerOriginReport
      */
-    var response = client.getBonusesSummaryPerOriginReport(auth, '07c159102f66a63b18d4da39bf91b06bacb7db8d');
+    var response = client.getBonusesSummaryPerOriginReport(auth, '767d478bd662cfe419e1ff6e70c0a7d723493c8b');
     response.success(function(data) {
         console.log(data);
     });
@@ -214,7 +214,7 @@ $(document).ready(function() {
     /*
      * Testing getReferralsSummaryPerOriginReport
      */
-    var response = client.getReferralsSummaryPerOriginReport(auth, '07c159102f66a63b18d4da39bf91b06bacb7db8d');
+    var response = client.getReferralsSummaryPerOriginReport(auth, '767d478bd662cfe419e1ff6e70c0a7d723493c8b');
     response.success(function(data) {
         console.log(data);
     });
@@ -313,7 +313,7 @@ $(document).ready(function() {
     /*
      * Testing getBonusesCheckup
      */
-    aryBonus = '{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HY7292D00", "amount_of_payments":"3","payment_amount":"10"}';
+    aryBonus = '{"advocate_token":"767d478bd662cfe419e1ff6e70c0a7d723493c8b","reference":"HY7292D00", "amount_of_payments":"3","payment_amount":"10"}';
     var response = client.getBonusesCheckup(auth, 'example-com', $.parseJSON(aryBonus));
     response.success(function(data) {
         console.log(data);
@@ -338,7 +338,7 @@ $(document).ready(function() {
      * Testing patchAdvocate
      */
     aryAdvocate = '{"name":"Jonh", "lastname":"Smith", "email":"jonh@email.com", "payout_threshold":10}';
-    var response = client.patchAdvocate(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', $.parseJSON(aryAdvocate));
+    var response = client.patchAdvocate(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b', $.parseJSON(aryAdvocate));
     response.success(function(data) {
         console.log(data);
     });
@@ -350,7 +350,7 @@ $(document).ready(function() {
      * Testing postAdvocatePaymentMethod
      */
     aryPaymentMethod = '{"advocate_payment_method":{"username":"aa@email.com", "description":"My main paypal account", "is_active":true}}';
-    var response = client.postAdvocatePaymentMethod(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', $.parseJSON(aryPaymentMethod));
+    var response = client.postAdvocatePaymentMethod(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b', $.parseJSON(aryPaymentMethod));
     response.success(function(data) {
         console.log(data);
     });
@@ -362,7 +362,7 @@ $(document).ready(function() {
      * Testing putAdvocatePaymentMethod
      */
     aryPaymentMethod = '{"advocate_payment_method":{"username":"aaaaa@email.com", "description":"My main paypal account", "is_active":true}}';
-    var response = client.putAdvocatePaymentMethod(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', 15, $.parseJSON(aryPaymentMethod));
+    var response = client.putAdvocatePaymentMethod(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b', 1, $.parseJSON(aryPaymentMethod));
     response.success(function(data) {
         console.log(data);
     });
@@ -373,8 +373,8 @@ $(document).ready(function() {
     /*
      * Testing postReferral
      */
-    aryReferral = '{"referral":{"referred_advocate_token":"8b3856077b4243700c15d3c75d1cf9866253f643","referral_origin_slug":"facebook-share","campaign_slug":"get-10-of-for-90-days","http_referer":"http://www.geniusreferrals.com"}}';
-    var response = client.postReferral(auth, 'example-com', '07c159102f66a63b18d4da39bf91b06bacb7db8d', $.parseJSON(aryReferral));
+    aryReferral = '{"referral":{"referred_advocate_token":"b1535f8b55985916f0049156065908f349b4a2ee","referral_origin_slug":"facebook-share","campaign_slug":"get-10-of-for-90-days","http_referer":"http://www.geniusreferrals.com"}}';
+    var response = client.postReferral(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b', $.parseJSON(aryReferral));
     response.success(function(data) {
         console.log(data);
     });
@@ -385,7 +385,7 @@ $(document).ready(function() {
     /*
      * Testing postBonuses
      */
-    aryBonus = '{"bonus":{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","reference":"HSY7292D00","amount_of_payments":3,"payment_amount":10}}';
+    aryBonus = '{"bonus":{"advocate_token":"b1535f8b55985916f0049156065908f349b4a2ee","reference":"HSY7292D00","amount_of_payments":3,"payment_amount":10}}';
     var response = client.postBonuses(auth, 'example-com', $.parseJSON(aryBonus));
     response.success(function(data) {
         console.log(data);
@@ -397,25 +397,36 @@ $(document).ready(function() {
     /*
      * Testing postRedemptionRequest
      */
-    aryRedemptionRequest = '{"redemption_request":{"advocate_token":"07c159102f66a63b18d4da39bf91b06bacb7db8d","request_status_slug":"processing","request_action_slug":"goods", "currency_code":"USD","amount":50, "description":"credit", "advocates_paypal_username":"alain@mail.com"}}';
-    var response = client.postRedemptionRequest(auth, 'example-com', $.parseJSON(aryRedemptionRequest));
-    response.success(function(data) {
-        console.log(datat);
-    });
-    response.fail(function(data) {
-        console.log(data.responseText);
-    });
+//    aryRedemptionRequest = '{"redemption_request":{"advocate_token":"767d478bd662cfe419e1ff6e70c0a7d723493c8b","request_status_slug":"processing","request_action_slug":"goods", "currency_code":"USD","amount":3, "description":"credit", "advocates_paypal_username":"alainhl@gmail.com"}}';
+//    var response = client.postRedemptionRequest(auth, 'example-com', $.parseJSON(aryRedemptionRequest));
+//    response.success(function(data) {
+//        console.log(data);
+//    });
+//    response.fail(function(data) {
+//        console.log(data);
+//    });
 
     /*
      * Testing patchRedemptionRequestRedemption
      */
-    var response = client.patchRedemptionRequestRedemption(auth, 'example-com', 3);
+    var response = client.patchRedemptionRequestRedemption(auth, 'example-com', 1);
     response.success(function(data) {
         console.log(data);
     });
     response.fail(function(data) {
         console.log(data);
     });
+    
+    /*
+     * Testing getAdvocatesShareLinks
+     */
+//    var response = client.getAdvocatesShareLinks(auth, 'example-com', '585c9895e736b1fbfa9be6c64d16f281900c1cba');
+//    response.success(function(data) {
+//        console.log(data);
+//    });
+//    response.fail(function(data) {
+//        console.log(data);
+//    });
 
 });
 

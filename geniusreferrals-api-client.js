@@ -719,7 +719,7 @@ gr.client.prototype.getBonusesCheckup = function(auth, account_slug, arrParams) 
     auth = typeof auth !== 'undefined' ? auth : '';
     account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
     arrParams = typeof arrParams !== 'undefined' ? arrParams : '';
-    
+
     filters = arrParams;
 
     return $.ajax({
@@ -1024,7 +1024,7 @@ gr.client.prototype.patchRedemptionRequestRedemption = function(auth, account_sl
 gr.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocateToken) {
     auth = typeof auth !== 'undefined' ? auth : '';
     strAdvocateToken = typeof strAdvocateToken !== 'undefined' ? strAdvocateToken : '';
-    
+
     filter = 'advocate_token=' + strAdvocateToken;
 
     return $.ajax({
@@ -1048,7 +1048,7 @@ gr.client.prototype.getBonusesSummaryPerOriginReport = function(auth, strAdvocat
 gr.client.prototype.getReferralsSummaryPerOriginReport = function(auth, strAdvocateToken) {
     auth = typeof auth !== 'undefined' ? auth : '';
     strAdvocateToken = typeof strAdvocateToken !== 'undefined' ? strAdvocateToken : '';
-    
+
     filter = 'advocate_token=' + strAdvocateToken;
 
     return $.ajax({
@@ -1233,6 +1233,29 @@ gr.client.prototype.getRedemptionRequestStatus = function(auth, redemption_reque
 
     return $.ajax({
         url: gr.baseUrl + '/utilities/redemption-request-statuses/' + redemption_request_status_slug,
+        type: 'GET',
+        headers: {
+            "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
+            "X-WSSE": auth.generateWSSEHeader()
+        }
+    });
+};
+
+/**
+ * Get list of share links.
+ * 
+ * @param object auth. Genius Referral authentication object
+ * @param string account_slug. The client account slug
+ * @param string advocate_token. The advocate token
+ * @return jqXHR object
+ */
+gr.client.prototype.getAdvocatesShareLinks = function(auth, account_slug, advocate_token) {
+    auth = typeof auth !== 'undefined' ? auth : '';
+    account_slug = typeof account_slug !== 'undefined' ? account_slug : '';
+    advocate_token = typeof advocate_token !== 'undefined' ? advocate_token : '';
+
+    return $.ajax({
+        url: gr.baseUrl + '/accounts/' + account_slug + '/advocates/' + advocate_token + '/share-links',
         type: 'GET',
         headers: {
             "Accept": "application/json; charset=utf-8; version=" + gr.apiVersion,
