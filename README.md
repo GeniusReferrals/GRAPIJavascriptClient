@@ -7,7 +7,7 @@ In English
 
 GRAPIJavascriptClient is the Javascript client to consume the Genius Referrals RESTful API.
 
-Genius Referrals is a referral marketing platform and word of mouse platform that allows 
+Genius Referrals is a referral marketing platform and word of mouth platform that allows 
 any company/person with a Website to increase his costumer acquisition by using word of mouth techniques thought 
 Facebook, Twitter, Google +, Pinterest, Linkedin, Email and personal recommendations.  For more information about Genius referrals please visit www.geniusreferrals.com.
 
