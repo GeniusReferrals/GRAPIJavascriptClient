@@ -11,7 +11,7 @@ Genius Referrals is a referral marketing platform and word of mouth platform tha
 any company/person with a Website to increase his costumer acquisition by using word of mouth techniques thought 
 Facebook, Twitter, Google +, Pinterest, Linkedin, Email and personal recommendations.  For more information about Genius referrals please visit www.geniusreferrals.com.
 
-[Instalation and Set up](resources/doc/index.en.md)
+[Installation and Setup](resources/doc/index.en.md)
 
 
 En Español
