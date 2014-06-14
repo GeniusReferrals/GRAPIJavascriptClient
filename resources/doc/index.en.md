@@ -4,10 +4,10 @@ Description:
 Genius Referrals in a intent to improve the integration process with its clients has created this library. 
 Which allows customers to consume, using Javascript, all Genius Referrals RESTful API resources located at http://api.geniusreferrals.com/doc/ . 
 
-Instalation:
+Installation:
 ------------
 
-The instalation process for this client in very simple, only in three steps. 
+The installation process for this client in very simple, only in three steps. 
 
 ### 1- Add the jQuery library to your Web page. 
 
@@ -54,9 +54,9 @@ Use the tag script one more time to add the client to your Web page.
 </html>
 ``` 
 
-After finishing these instalation steps, load the page in you Web browser and make sure that the jQuery libray and the GRAPIJavascriptClient were successfully loaded. 
+After finishing these installation steps, load the page in you Web browser and make sure that the jQuery libray and the GRAPIJavascriptClient were successfully loaded. 
 
-Should you need more help with the instalation please review this: 
+Should you need more help with the installation please review this: 
 
 * [geniusreferrals tests](https://github.com/GeniusReferrals/GRAPIJavascriptClient/blob/master/tests/geniusreferrals-test.html) 
 
