@@ -325,7 +325,7 @@ $(document).ready(function() {
     /*
      * Testing postAdvocate
      */
-    aryAdvocate = '{"advocate": {"name":"Alain", "lastname":"Smith", "email":"jonh@email.com", "payout_threshold":10}}';
+    var aryAdvocate = '{"advocate": {"name":"Alain", "lastname":"Smith", "email":"jonh@email.com", "payout_threshold":10}}';
     var response = client.postAdvocate(auth, 'example-com', $.parseJSON(aryAdvocate));
     response.success(function(data) {
         console.log(data);
