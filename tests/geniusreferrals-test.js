@@ -309,7 +309,29 @@ $(document).ready(function() {
     response.fail(function(data) {
         console.log(data);
     });
-
+    
+    /*
+     * Testing getReferralOrigins
+     */
+    var response = client.getReferralOrigins(auth);
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+    
+    /*
+     * Testing getReferralOrigin
+     */
+    var response = client.getReferralOrigin(auth, 'facebook-share');
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+    
     /*
      * Testing getBonusesCheckup
      */
