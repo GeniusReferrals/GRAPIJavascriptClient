@@ -4,7 +4,7 @@ $(document).ready(function() {
      */
     var apiUsername = 'YOUR_USERNAME';
     var apiToken = 'YOUR_API_TOKEN';
-
+    
     var client = new gr.client();
     var auth = new gr.auth(apiUsername, apiToken);
 
