@@ -4,7 +4,7 @@ $(document).ready(function() {
      */
     var apiUsername = 'YOUR_USERNAME';
     var apiToken = 'YOUR_API_TOKEN';
-    
+
     var client = new gr.client();
     var auth = new gr.auth(apiUsername, apiToken);
 
@@ -309,7 +309,7 @@ $(document).ready(function() {
     response.fail(function(data) {
         console.log(data);
     });
-    
+
     /*
      * Testing getReferralOrigins
      */
@@ -320,7 +320,7 @@ $(document).ready(function() {
     response.fail(function(data) {
         console.log(data);
     });
-    
+
     /*
      * Testing getReferralOrigin
      */
@@ -331,7 +331,7 @@ $(document).ready(function() {
     response.fail(function(data) {
         console.log(data);
     });
-    
+
     /*
      * Testing getBonusesCheckup
      */
@@ -438,7 +438,7 @@ $(document).ready(function() {
     response.fail(function(data) {
         console.log(data);
     });
-    
+
     /*
      * Testing getAdvocatesShareLinks
      */
@@ -450,5 +450,81 @@ $(document).ready(function() {
 //        console.log(data);
 //    });
 
+    /*
+     * Testing deleteAdvocates
+     */
+    var response = client.deleteAdvocates(auth, 'example-com');
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+
+    /*
+     * Testing deleteAdvocate
+     */
+    var response = client.deleteAdvocate(auth, 'example-com', '767d478bd662cfe419e1ff6e70c0a7d723493c8b');
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+
+    /*
+     * Testing getReportsBonusesDailyGiven
+     */
+    var response = client.getReportsBonusesDailyGiven(auth);
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+
+    /*
+     * Testing getReportsClickDailyParticipation
+     */
+    var response = client.getReportsClickDailyParticipation(auth);
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+    
+    /*
+     * Testing getReportsReferralDailyParticipation
+     */
+    var response = client.getReportsReferralDailyParticipation(auth);
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+    
+    /*
+     * Testing getReportsShareDailyParticipation
+     */
+    var response = client.getReportsShareDailyParticipation(auth);
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
+    
+    /*
+     * Testing getReportsTopAdvocates
+     */
+    var response = client.getReportsTopAdvocates(auth);
+    response.success(function(data) {
+        console.log(data);
+    });
+    response.fail(function(data) {
+        console.log(data);
+    });
 });
 
