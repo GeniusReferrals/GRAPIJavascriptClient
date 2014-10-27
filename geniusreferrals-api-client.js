@@ -175,7 +175,7 @@ gr.client.prototype.getAccount = function(auth, account_slug) {
  * @param string account_slug. The client account slug
  * @param integer page.  The current page, default is 1.
  * @param integer limit. Maximum number of results to return in the response.
- * @param string filter. Allowed fields: name, lastname, email, bonus_exchange_method_slug, campaign_slug, from, to, created.
+ * @param string filter. Allowed fields: name, lastname, email, bonus_exchange_method_slug, campaign_slug, can_refer from, to, created.
  *                       Use the following delimiters to build your
  *                       filters params. The vertical bar ('|') to separate individual filter 
  *                       phrases and a double colon ('::') to separate the names and values. 
@@ -221,15 +221,23 @@ gr.client.prototype.getAdvocates = function(auth, account_slug, page, limit, fil
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
  * @param array arrParams.
- * Request Format All parameters in the content of the request are mandatory.
+ * 
+ * **Request Format**
+ *
+ * Not all parameters in the content of the request are mandatory. Parameters avatar_url, metadata and can_refer are optional.
+ *
  * {
- *       "advocate":{
- *           "name":"Jonh",
- *           "lastname":"Smith",
- *           "email": "jonh@email.com",
- *           "payout_threshold":10
- *       }
+ *     "advocate":{
+ *         "name":"Jonh",
+ *         "lastname":"Smith",
+ *         "email": "jonh_at_email.com",
+ *         "payout_threshold":10,
+ *         "avatar_url":"http://www.geniusreferrals.com/bundles/frontend/images/geniusreferrals-logo.png",
+ *         "metadata":"extra metadata",
+ *         "can_refer": 1 
+ *     }
  * }
+ * 
  * @return jqXHR object
  */
 gr.client.prototype.postAdvocate = function(auth, account_slug, arrParams) {
@@ -277,24 +285,33 @@ gr.client.prototype.getAdvocate = function(auth, account_slug, advocate_token) {
 };
 
 /**
- * Update partial elements of an advocate. Use this method when you do not need to update all the elements at the same time. 
- * Allowed parameters to be updated are: name, lastname, email, payout_threshold, claimed_balance, unclaimed_balance, 
- * campaign_slug, currency_code, advocate_referrer_token.
- *
+ * Update partial elements of an advocate. Use this method when you do not need to update all the elements at the same time.
+ *  
  * @param object auth. Genius Referral authentication object
  * @param string account_slug. The client account slug
  * @param string advocate_token. The advocate token
  * @param array arrParams.
- * Request Format
+ * 
+ * ** Request Format **
+ * 
+ * Allowed parameters to be updated are: name, lastname, email, payout_threshold, claimed_balance, unclaimed_balance, currency_code, avatar_url, metadata and can_refer
+ * 
  * {
  *   "name":"Jonh",
  *   "lastname":"Smith",
  *   "email": "jonh_at_email.com",
  *   "payout_threshold":10,
- *   advocate_referrer_token=4f31f3470dca3161b4f3f14a8c67ac1e56dc93d1
+ *   "claimed_balance":10,
+ *   "unclaimed_balance":10,
+ *   "currency_code": "USD",
+ *   "avatar_url":"http://www.geniusreferrals.com/bundles/frontend/images/geniusreferrals-logo.png",
+ *   "metadata":"extra metadata",
+ *   "can_refer": 1 
  * }
+ * 
  * -- OR --
  * {"name":"Jonh"}
+ * 
  * -- OR send a query string like this --
  * payout_threshold=10&claimed_balance=10&unclaimed_balance=10&campaign_slug=get-10-of-for-90-days&currency_code=EUR
  * 
